@@ -1,11 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "Block Site",
-  "description": "Blocks access to distracting websites to improve your productivity.",
-  "version": "2.1.1",
-  "icons": { "128": "icon.png" },
+  "name": "Smart Block Site",
+  "description": "Earn points through productive sites in order to view unproductive sites.",
+  "version": "0.0.1",
+  "icons": {
+    "128": "images/icon.png"
+  },
+  "action": {
+    "default_icon": {
+      "128": "images/icon.png"
+    },
+    "default_popup": "options.html"
+  },
   "options_page": "options.html",
-  "permissions": ["storage", "tabs"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms"
+  ],
   "background": {
     "service_worker": "background.js"
   }
