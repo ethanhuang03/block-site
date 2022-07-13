@@ -110,8 +110,8 @@ function updateScore(url, tabId, subtract_only) {
 						score: score + parseInt(merit_weight)
 					});
 				}
-				return;
 			}
+			return;
 		}
 
 		const rules = getRules(blocked);
@@ -127,8 +127,8 @@ function updateScore(url, tabId, subtract_only) {
 						score: score + parseInt(merit_weight)
 					});
 				}
-				return;
 			}
+			return;
 		}
 
 		switch (resolution) {
@@ -175,6 +175,7 @@ function blocker() {
 	});
 
 	// keep on deducting points even if tab is not active
+
 	chrome.tabs.query({
 		active: false
 	}, function(tabs) {
@@ -200,7 +201,6 @@ function blocker() {
 			text: STORED_SCORE.score.toString(10)
 		});
 	}
-
 }
 
 chrome.runtime.onStartup.addListener(function() {
@@ -224,8 +224,13 @@ getData("score");
 chrome.action.setBadgeBackgroundColor({
 	color: "#777"
 });
-setInterval(blocker, 1000);
 /*
-chrome.alarms.create("delay", { delayInMinutes: 1/60 });
-chrome.alarms.onAlarm.addListener(blocker);
+setInterval(blocker, 1000);
 */
+
+chrome.alarms.create("delay", { periodInMinutes: 1/60 });
+chrome.alarms.onAlarm.addListener((alarms) => {
+	if (alarms.name === "delay") {
+		blocker();
+	}
+});
