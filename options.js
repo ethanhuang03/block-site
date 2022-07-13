@@ -12,13 +12,13 @@ const maxPoint = document.getElementById("max-point");
 const resetAfterClousureToggle = document.getElementById("reset-after-clousure-toggle");
 
 blockedList.placeholder = [
-	"facebook.com",
-	"instagram.com",
 	"youtube.com",
-	"!music.youtube.com",
+	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	"twitter.com",
-	"reddit.com",
-	"!reddit.com/r/MachineLearning",
+	"facebook.com",
+	"messenger.com",
+	"discord.com",
+	"instagram.com"
 ].join("\n");
 
 blockedList.addEventListener("change", (event) => {
