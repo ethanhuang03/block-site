@@ -85,7 +85,11 @@ function updateScore(url, tabId, subtract_only) {
 			score
 		} = local;
 
-		if (!enabled || !Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
+		if (!enabled) {
+			return;
+		}
+		
+		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
 			if (!subtract_only) {
 				if (score >= parseInt(max_point)) {
 					chrome.storage.local.set({
