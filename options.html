@@ -59,6 +59,28 @@
       #credits {
         margin-top: 2em;
       }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 3px;
+        padding: 5px 0;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
@@ -79,9 +101,7 @@
 
     <div id="controls">
       <div>
-        <label for="resolution-select"
-          >What to do when a site is blocked?</label
-        >
+        <label for="resolution-select">What to do when a site is blocked?</label>
         <select id="resolution-select">
           <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
           <option value="CLOSE_TAB">Close Tab</option>
@@ -91,15 +111,24 @@
         <label for="enabled-toggle">Enabled?</label>
         <input id="enabled-toggle" type="checkbox" />
       </div>
-      <label for="merit-weight">Merit Weight</label>
+      <span class="tooltip">
+        <label for="merit-weight">Merit Weight</label>
+        <span class="tooltiptext">Points added per second on merit sites.</span>
+      </span>
       <div>
         <input id="merit-weight" type="number" min="0" value="1" />
       </div>
-      <label for="demerit-weight">Demerit Weight</label>
+      <span class="tooltip">
+        <label for="demerit-weight">Demerit Weight</label>
+        <span class="tooltiptext">Points subtracted per second on merit sites.</span>
+      </span>
       <div>
         <input id="demerit-weight" type="number" min="0" value="1" />
       </div>
-      <label for="max-point">Max Point Accumulated</label>
+      <span class="tooltip">
+        <label for="max-point">Max Point Accumulated</label>
+        <span class="tooltiptext">A limit to points accumulated. OPTIONAl.</span>
+      </span>
       <div>
         <input id="max-point" type="number" min="0" />
       </div>
@@ -115,6 +144,7 @@
           <summary>Contact</summary>
           <ul>
             <li>Email: ethanhuang301@gmail.com</li>
+            <li>Discord: NathanHueg#8084</li>
           </ul>
         </details>
         <details>
