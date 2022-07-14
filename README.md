@@ -20,6 +20,4 @@ This project is a fork of: https://github.com/penge/block-site
 
 KNOWN BUGS:
 service worker spending too long inactive 
-reset points after closure takes two closings to activate
-rest points after closure disables service worker and does not reactivate it
 on first install, code breaks and does not loop.

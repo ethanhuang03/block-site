@@ -72,21 +72,7 @@ const getRules = (blocked) => {
 	return rules;
 };
 
-var STORED_SCORE = 0;
-
-function setData(value) {
-	STORED_SCORE = value;
-}
-
-function getData(obj) {
-	chrome.storage.local.get(obj, function(result) {
-		setData(result); // here it works, I can do something with my object
-	});
-	return; // here it doesn't work
-}
-
 function updateScore(url, tabId, subtract_only) {
-	getData("score");
 	const normalizedUrl = normalizeUrl(url);
 	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score"], function(local) {
 		const {
@@ -157,8 +143,6 @@ function updateScore(url, tabId, subtract_only) {
 }
 
 function blocker() {
-	console.log(STORED_SCORE.score);
-
 	chrome.tabs.query({
 		active: true,
 		currentWindow: true
@@ -192,15 +176,12 @@ function blocker() {
 		}
 	});
 
-	if (STORED_SCORE.score == null) {
+	chrome.storage.local.get("score", function(local) {
 		chrome.action.setBadgeText({
-			text: "?"
+			text: local.score.toString(10)
 		});
-	} else {
-		chrome.action.setBadgeText({
-			text: STORED_SCORE.score.toString(10)
-		});
-	}
+		console.log(local.score);
+	});
 }
 
 chrome.runtime.onStartup.addListener(function() {
@@ -210,7 +191,10 @@ chrome.runtime.onStartup.addListener(function() {
 			chrome.storage.local.set({
 				score: 0
 			});
-		}
+		chrome.action.setBadgeText({
+			text: "0"
+		});
+	}
 	});
 });
 
@@ -220,7 +204,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	});
 });
 
-getData("score");
 chrome.action.setBadgeBackgroundColor({
 	color: "#777"
 });
