@@ -9,7 +9,7 @@ const enabledToggle = document.getElementById("enabled-toggle");
 const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
 const maxPoint = document.getElementById("max-point");
-const resetAfterClousureToggle = document.getElementById("reset-after-clousure-toggle");
+const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 
 blockedList.placeholder = [
 	"youtube.com",
@@ -69,16 +69,16 @@ maxPoint.addEventListener("change", (event) => {
 	});
 });
 
-resetAfterClousureToggle.addEventListener("change", (event) => {
-	const reset_after_clousure = event.target.checked;
+resetAfterClosureToggle.addEventListener("change", (event) => {
+	const reset_after_closure = event.target.checked;
 
 	chrome.storage.local.set({
-		reset_after_clousure
+		reset_after_closure
 	});
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_clousure"], function(local) {
+	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -86,7 +86,7 @@ window.addEventListener("DOMContentLoaded", () => {
 			merit_weight,
 			demerit_weight,
 			max_point,
-			reset_after_clousure
+			reset_after_closure
 		} = local;
 
 		if (!Array.isArray(blocked)) {
@@ -112,8 +112,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		// maxPoint
 		maxPoint.value = max_point;
 
-		// resetAfterClousureToggle
-		resetAfterClousureToggle.checked = reset_after_clousure;
+		// resetAfterClosureToggle
+		resetAfterClosureToggle.checked = reset_after_closure;
 
 		// UI ready
 		document.body.classList.add("ready");

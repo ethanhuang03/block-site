@@ -6,8 +6,8 @@ const CLOSE_TAB = "CLOSE_TAB";
 const SHOW_BLOCKED_INFO_PAGE = "SHOW_BLOCKED_INFO_PAGE";
 
 const RESOLUTIONS = [
-	CLOSE_TAB,
 	SHOW_BLOCKED_INFO_PAGE,
+	CLOSE_TAB,
 ];
 
 
@@ -148,13 +148,13 @@ function blocker() {
 		currentWindow: true
 	}, function(tabs) {
 		var activeTab = tabs[0];
-		var tabId = activeTab.id;
 		var url = activeTab.url
+		var tabId = activeTab.id;
 
 		if (!url || !url.startsWith("http")) {
 			return;
 		}
-
+	
 		updateScore(url, tabId, false);
 	});
 
