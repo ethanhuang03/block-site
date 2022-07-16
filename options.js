@@ -10,6 +10,7 @@ const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
 const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
+const settingEnabled = document.getElementById("setting-enabled");
 
 blockedList.placeholder = [
 	"youtube.com",
@@ -77,8 +78,41 @@ resetAfterClosureToggle.addEventListener("change", (event) => {
 	});
 });
 
+function block_settings(setting_enabled){
+	if (setting_enabled){
+		document.getElementById("blocked-list").disabled = true;
+		document.getElementById("enabled-toggle").disabled = true;
+		document.getElementById("merit-weight").disabled = true;
+		document.getElementById("demerit-weight").disabled = true;
+		document.getElementById("max-point").disabled = true;
+	}
+	else {
+		document.getElementById("blocked-list").disabled = false;
+		document.getElementById("enabled-toggle").disabled = false;
+		document.getElementById("merit-weight").disabled = false;
+		document.getElementById("demerit-weight").disabled = false;
+		document.getElementById("max-point").disabled = false;
+	}
+}
+
+settingEnabled.addEventListener("click", (event) => {
+	const setting_enabled = event.target.checked;
+
+	chrome.storage.local.set({
+		setting_enabled
+	});
+
+	if(!setting_enabled){
+		chrome.storage.local.set({
+			score: 0
+		});
+	}
+
+	block_settings(setting_enabled);
+});
+
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure"], function(local) {
+	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -86,7 +120,8 @@ window.addEventListener("DOMContentLoaded", () => {
 			merit_weight,
 			demerit_weight,
 			max_point,
-			reset_after_closure
+			reset_after_closure,
+			setting_enabled
 		} = local;
 
 		if (!Array.isArray(blocked)) {
@@ -114,6 +149,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// resetAfterClosureToggle
 		resetAfterClosureToggle.checked = reset_after_closure;
+
+		// settingEnabled
+		settingEnabled.checked = setting_enabled;
+		block_settings(setting_enabled);
 
 		// UI ready
 		document.body.classList.add("ready");

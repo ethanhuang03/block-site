@@ -71,8 +71,15 @@
         background-color: #555;
         color: #fff;
         text-align: center;
-        border-radius: 3px;
         padding: 5px 0;
+        border-radius: 6px;
+
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+
         opacity: 0;
         transition: opacity 0.3s;
       }
@@ -107,10 +114,12 @@
           <option value="CLOSE_TAB">Close Tab</option>
         </select>
       </div>
+
       <div>
         <label for="enabled-toggle">Enabled?</label>
         <input id="enabled-toggle" type="checkbox" />
       </div>
+
       <span class="tooltip">
         <label for="merit-weight">Merit Weight</label>
         <span class="tooltiptext">Points added per second on merit sites.</span>
@@ -118,6 +127,7 @@
       <div>
         <input id="merit-weight" type="number" min="0" value="1" />
       </div>
+      
       <span class="tooltip">
         <label for="demerit-weight">Demerit Weight</label>
         <span class="tooltiptext">Points subtracted per second on demerit sites.</span>
@@ -125,6 +135,7 @@
       <div>
         <input id="demerit-weight" type="number" min="0" value="1" />
       </div>
+
       <span class="tooltip">
         <label for="max-point">Max Point Accumulated</label>
         <span class="tooltiptext">A limit to points accumulated. OPTIONAl.</span>
@@ -132,10 +143,18 @@
       <div>
         <input id="max-point" type="number" min="0" />
       </div>
+
       <div>
-        <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
-        <input id="reset-after-closure-toggle" type="checkbox" />
+        <span class="tooltip">
+          <label for="setting-enabled">Enable/Disable Settings</label>
+          <span class="tooltiptext">Once enabled, points will reset if disabled.</span>
+          <input id="setting-enabled" type="checkbox" />
+        </span>
       </div>
+
+      <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
+      <input id="reset-after-closure-toggle" type="checkbox" />
+      
     </div>
     <details>
       <summary>Miscellaneous</summary>
