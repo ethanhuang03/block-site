@@ -31,24 +31,22 @@ chrome.runtime.onInstalled.addListener(function() {
 			});
 		}
 	});
+
+	chrome.storage.local.set({
+		score: 0
+	});
 });
 
 const __removeProtocol = (url) => url.replace(/^http(s?):\/\//, "");
 const __removeWww = (url) => url.replace(/^www\./, "");
 const __removeTrailingSlash = (url) => url.endsWith("/") ? url.slice(0, -1) : url;
 
-// "https://www.youtube.com/" => "youtube.com"
-// "https://www.youtube.com/feed/explore" => "youtube.com/feed/explore"
-// "https://music.youtube.com/" => "music.youtube.com"
-// "https://music.youtube.com/explore" => "music.youtube.com/explore"
 const normalizeUrl = (url) => [url]
 	.map(__removeProtocol)
 	.map(__removeWww)
 	.map(__removeTrailingSlash)
 	.pop();
 
-// ["youtube.com", "!music.youtube.com"] => [{ path: "music.youtube.com", type: "allow" }, { path: "youtube.com", type: "block" }]
-// ["https://youtube.com/", "!https://music.youtube.com/"] => [{ path: "music.youtube.com", type: "allow" }, { path: "youtube.com", type: "block" }]
 const getRules = (blocked) => {
 	const allowList = blocked
 		.filter((item) => item.startsWith("!"))
@@ -71,6 +69,15 @@ const getRules = (blocked) => {
 
 	return rules;
 };
+
+function updateBadge(){
+	chrome.storage.local.get("score", function(local) {
+		chrome.action.setBadgeText({
+			text: local.score.toString(10)
+		});
+		console.log(local.score);
+	});
+}
 
 function updateScore(url, tabId, subtract_only) {
 	const normalizedUrl = normalizeUrl(url);
@@ -180,12 +187,7 @@ function blocker() {
 		}
 	});
 
-	chrome.storage.local.get("score", function(local) {
-		chrome.action.setBadgeText({
-			text: local.score.toString(10)
-		});
-		console.log(local.score);
-	});
+	updateBadge();
 }
 
 chrome.runtime.onStartup.addListener(function() {
@@ -202,18 +204,38 @@ chrome.runtime.onStartup.addListener(function() {
 	});
 });
 
-chrome.runtime.onInstalled.addListener(function(details) {
-	chrome.storage.local.set({
-		score: 0
-	});
-});
-
 chrome.action.setBadgeBackgroundColor({
 	color: "#777"
 });
+
+/*SERVICE WORKER WORKAROUND*/
+function asyncDelay(msToDelay) {
+	return new Promise((success, failure) => {
+		var completionTime = new Date().getTime() + msToDelay
+		while (true) {
+		  if (new Date().getTime() >= completionTime){
+			success()
+			break
+		  }
+		}
+		failure()
+	})
+}
+
+async function run() {
+	for(let i = 0; i < 60; i++) {
+		blocker();
+		await asyncDelay(1000);
+		chrome.alarms.create(`delay${i}`, { periodInMinutes:1 });
+	}
+}
+
+chrome.alarms.onAlarm.addListener(() => {
+	blocker();
+})
+
 /*
-setInterval(blocker, 1000);
-*/
+updateBadge();
 
 chrome.alarms.create("delay", { periodInMinutes: 1/60 });
 chrome.alarms.onAlarm.addListener((alarms) => {
@@ -221,3 +243,4 @@ chrome.alarms.onAlarm.addListener((alarms) => {
 		blocker();
 	}
 });
+*/
