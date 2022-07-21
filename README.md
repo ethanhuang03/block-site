@@ -19,5 +19,6 @@ https://github.com/ethanhuang03/block-site
 This project is a fork of: https://github.com/penge/block-site
 
 KNOWN BUGS:
+reset points after closure not working
 service worker spending too long inactive 
 on first install, code breaks and does not loop.
