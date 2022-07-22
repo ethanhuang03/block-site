@@ -191,9 +191,9 @@ function blocker() {
 }
 
 chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.local.get("reset_after_clousure", function(local) {
-		console.log(local.reset_after_clousure);
-		if (local.reset_after_clousure == true) {
+	chrome.storage.local.get("reset_after_closure", function(local) {
+		console.log(local.reset_after_closure);
+		if (local.reset_after_closure == true) {
 			chrome.storage.local.set({
 				score: 0
 			});
