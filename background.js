@@ -231,6 +231,7 @@ async function run() {
 }
 
 chrome.alarms.onAlarm.addListener(() => {
+	console.log("Running");
 	blocker();
 })
 
