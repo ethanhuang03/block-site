@@ -35,6 +35,8 @@ chrome.runtime.onInstalled.addListener(function() {
 	chrome.storage.local.set({
 		score: 0
 	});
+
+	chrome.tabs.create({url:chrome.runtime.getURL("options.html")});
 });
 
 const __removeProtocol = (url) => url.replace(/^http(s?):\/\//, "");
