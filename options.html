@@ -26,6 +26,13 @@
         opacity: 1;
         transition: opacity .7s;
       }
+      #permanent-blocked-list {
+        border: 3px solid;
+        outline: none;
+        font-size: inherit;
+        line-height: inherit;
+        white-space: pre;
+      }
 
       #controls {
         transition: opacity 1s;
@@ -143,7 +150,7 @@
         <input id="demerit-weight" type="number" min="0" value="1" />
       </div>
 
-      <h3>Optional Settings</h3>
+      <h2>Optional Settings</h2>
       <span class="tooltip">
         <label for="max-point">Max Point Accumulated</label>
         <span class="tooltiptext">A limit to points accumulated. OPTIONAl.</span>
@@ -162,6 +169,15 @@
 
       <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
       <input id="reset-after-closure-toggle" type="checkbox" />
+      <br>
+      <h2>Permanent Block List</h2>
+      <p>Specify sites you want to <b>PERMANENTLY</b> block.</p>
+      <textarea
+        id="permanent-blocked-list"
+        rows="10"
+        cols="50"
+        spellcheck="false"
+      ></textarea>
       
     </div>
     <details>

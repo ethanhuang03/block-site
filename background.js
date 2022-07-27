@@ -81,9 +81,34 @@ function updateBadge(){
 	});
 }
 
+function block_website(resolution, url, tabId, score, demerit_weight, permanent_blocked) {
+	switch (resolution) {
+		case CLOSE_TAB:
+			if (score > 0 && !permanent_blocked) {
+				chrome.storage.local.set({
+					score: score - parseFloat(demerit_weight)
+				});
+			} else {
+				chrome.tabs.remove(tabId);
+				break;
+			}
+			case SHOW_BLOCKED_INFO_PAGE:
+				if (score > 0 && !permanent_blocked) {
+					chrome.storage.local.set({
+						score: score - parseFloat(demerit_weight)
+					});
+				} else {
+					chrome.tabs.update(tabId, {
+						url: `${chrome.runtime.getURL("blocked.html")}?url=${url}`
+					});
+					break;
+				}
+	}
+}
+
 function updateScore(url, tabId, subtract_only) {
 	const normalizedUrl = normalizeUrl(url);
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score"], function(local) {
+	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -97,24 +122,10 @@ function updateScore(url, tabId, subtract_only) {
 		if (!enabled) {
 			return;
 		}
-		
-		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
-			if (!subtract_only) {
-				if (score >= parseFloat(max_point)) {
-					chrome.storage.local.set({
-						score: parseFloat(max_point)
-					});
-				} else {
-					chrome.storage.local.set({
-						score: score + parseFloat(merit_weight)
-					});
-				}
-			}
-			return;
-		}
 
 		const rules = getRules(blocked);
 		const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+
 		if (!foundRule || foundRule.type === "allow") {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
@@ -130,32 +141,25 @@ function updateScore(url, tabId, subtract_only) {
 			return;
 		}
 
-		switch (resolution) {
-			case CLOSE_TAB:
-				if (score > 0) {
+		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
+			if (!subtract_only) {
+				if (score >= parseFloat(max_point)) {
 					chrome.storage.local.set({
-						score: score - parseFloat(demerit_weight)
+						score: parseFloat(max_point)
 					});
 				} else {
-					chrome.tabs.remove(tabId);
-					break;
+					chrome.storage.local.set({
+						score: score + parseFloat(merit_weight)
+					});
 				}
-				case SHOW_BLOCKED_INFO_PAGE:
-					if (score > 0) {
-						chrome.storage.local.set({
-							score: score - parseFloat(demerit_weight)
-						});
-					} else {
-						chrome.tabs.update(tabId, {
-							url: `${chrome.runtime.getURL("blocked.html")}?url=${url}`
-						});
-						break;
-					}
+			}
+			return;
 		}
+		block_website(resolution, url, tabId, score, demerit_weight, false);
 	});
 }
 
-function blocker() {
+function main() {
 	chrome.tabs.query({
 		active: true,
 		currentWindow: true
@@ -163,7 +167,7 @@ function blocker() {
 		var activeTab = tabs[0];
 		var url = activeTab.url
 		var tabId = activeTab.id;
-
+		
 		if (!url || !url.startsWith("http")) {
 			return;
 		}
@@ -206,9 +210,34 @@ chrome.runtime.onStartup.addListener(function() {
 	});
 });
 
+chrome.webRequest.onBeforeRequest.addListener(
+	function(details) {
+		chrome.tabs.query({}, function(tabs){
+			for (let i = 0; i < tabs.length; i++) {
+				var tab = tabs[i];
+				var tabId = tab.id;
+				var url = tab.url;
+	
+				if (!url || !url.startsWith("http")) {
+					continue;
+				}
+				const normalizedUrl = normalizeUrl(url);
+				chrome.storage.local.get(["permanent_blocked", "resolution", "demerit_weight", "score"], function(local) {
+					const permernant_rules = getRules(local.permanent_blocked);
+					const foundPermRule = permernant_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+					if (foundPermRule || !foundPermRule.type === "allow") {
+						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
+					}
+				});
+			}
+		})
+	},
+	{urls: ["<all_urls>"]});
+
 chrome.action.setBadgeBackgroundColor({
 	color: "#777"
 });
+
 /*
 //SERVICE WORKER WORKAROUND
 function asyncDelay(msToDelay) {
@@ -226,23 +255,23 @@ function asyncDelay(msToDelay) {
 
 async function run() {
 	for(let i = 0; i < 60; i++) {
-		blocker();
+		main();
 		await asyncDelay(1000);
 		chrome.alarms.create(`delay${i}`, { periodInMinutes:1 });
 	}
 }
 
 chrome.alarms.onAlarm.addListener(() => {
-	blocker();
+	main();
 })
-
 */
+
 updateBadge();
-blocker();
+main();
 chrome.alarms.create("delay", { periodInMinutes: 1 });
 chrome.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
-		blocker();
+		main();
 	}
 });
 

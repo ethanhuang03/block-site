@@ -3,6 +3,7 @@
 /* global chrome, window, document */
 
 const blockedList = document.getElementById("blocked-list");
+const permanentblockedList = document.getElementById("permanent-blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
 const enabledToggle = document.getElementById("enabled-toggle");
 
@@ -12,6 +13,7 @@ const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 const settingEnabled = document.getElementById("setting-enabled");
 const autofill = document.getElementById("autofill");
+
 
 const COMMON_DISTRACTORS = [
 	"facebook.com",
@@ -66,6 +68,13 @@ blockedList.addEventListener("change", (event) => {
 	const blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
 	chrome.storage.local.set({
 		blocked
+	});
+});
+
+permanentblockedList.addEventListener("change", (event) => {
+	const permanent_blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+	chrome.storage.local.set({
+		permanent_blocked
 	});
 });
 
@@ -153,7 +162,7 @@ autofill.addEventListener("click", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled"], function(local) {
+	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -162,7 +171,8 @@ window.addEventListener("DOMContentLoaded", () => {
 			demerit_weight,
 			max_point,
 			reset_after_closure,
-			setting_enabled
+			setting_enabled,
+			permanent_blocked
 		} = local;
 
 		if (!Array.isArray(blocked)) {
@@ -172,6 +182,12 @@ window.addEventListener("DOMContentLoaded", () => {
 		// blocked
 		var value = blocked.join("\r\n"); // display every blocked in new line
 		blockedList.value = value;
+
+		if (Array.isArray(permanent_blocked)) {
+			// permanent blocked
+			var permanentblocked_list = permanent_blocked.join("\r\n"); // display every permanent blocked in new line
+			permanentblockedList.value = permanentblocked_list;
+		}
 
 		// resolution
 		resolutionSelect.value = resolution;

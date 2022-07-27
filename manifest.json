@@ -16,7 +16,11 @@
   "permissions": [
     "storage",
     "tabs",
-    "alarms"
+    "alarms",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
