@@ -100,13 +100,13 @@ function updateScore(url, tabId, subtract_only) {
 		
 		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
 			if (!subtract_only) {
-				if (score >= parseInt(max_point)) {
+				if (score >= parseFloat(max_point)) {
 					chrome.storage.local.set({
-						score: parseInt(max_point)
+						score: parseFloat(max_point)
 					});
 				} else {
 					chrome.storage.local.set({
-						score: score + parseInt(merit_weight)
+						score: score + parseFloat(merit_weight)
 					});
 				}
 			}
@@ -117,13 +117,13 @@ function updateScore(url, tabId, subtract_only) {
 		const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
 		if (!foundRule || foundRule.type === "allow") {
 			if (!subtract_only) {
-				if (score >= parseInt(max_point)) {
+				if (score >= parseFloat(max_point)) {
 					chrome.storage.local.set({
-						score: parseInt(max_point)
+						score: parseFloat(max_point)
 					});
 				} else {
 					chrome.storage.local.set({
-						score: score + parseInt(merit_weight)
+						score: score + parseFloat(merit_weight)
 					});
 				}
 			}
@@ -134,7 +134,7 @@ function updateScore(url, tabId, subtract_only) {
 			case CLOSE_TAB:
 				if (score > 0) {
 					chrome.storage.local.set({
-						score: score - parseInt(demerit_weight)
+						score: score - parseFloat(demerit_weight)
 					});
 				} else {
 					chrome.tabs.remove(tabId);
@@ -143,7 +143,7 @@ function updateScore(url, tabId, subtract_only) {
 				case SHOW_BLOCKED_INFO_PAGE:
 					if (score > 0) {
 						chrome.storage.local.set({
-							score: score - parseInt(demerit_weight)
+							score: score - parseFloat(demerit_weight)
 						});
 					} else {
 						chrome.tabs.update(tabId, {
@@ -209,8 +209,8 @@ chrome.runtime.onStartup.addListener(function() {
 chrome.action.setBadgeBackgroundColor({
 	color: "#777"
 });
-
-/*SERVICE WORKER WORKAROUND*/
+/*
+//SERVICE WORKER WORKAROUND
 function asyncDelay(msToDelay) {
 	return new Promise((success, failure) => {
 		var completionTime = new Date().getTime() + msToDelay
@@ -233,17 +233,16 @@ async function run() {
 }
 
 chrome.alarms.onAlarm.addListener(() => {
-	console.log("Running");
 	blocker();
 })
 
-/*
+*/
 updateBadge();
-
-chrome.alarms.create("delay", { periodInMinutes: 1/60 });
+blocker();
+chrome.alarms.create("delay", { periodInMinutes: 1 });
 chrome.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
 		blocker();
 	}
 });
-*/
+

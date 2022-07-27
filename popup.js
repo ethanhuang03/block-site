@@ -11,20 +11,6 @@ const demeritWeight = document.getElementById("demerit-weight");
 const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 const settingEnabled = document.getElementById("setting-enabled");
-const autofill = document.getElementById("autofill");
-
-const COMMON_DISTRACTORS = [
-	"facebook.com",
-	"twitter.com",
-	"instagram.com",
-	"youtube.com",
-	"reddit.com",
-	"messenger.com",
-	"snapchat.com",
-	"whatsapp.com",
-	"tiktok.com",
-	"discord.com"
-];
 
 function updateBadge(){
 	chrome.storage.local.get("score", function(local) {
@@ -32,24 +18,6 @@ function updateBadge(){
 			text: local.score.toString(10)
 		});
 	});
-}
-
-function block_settings(setting_enabled){
-	if (setting_enabled){
-		document.getElementById("blocked-list").disabled = true;
-		document.getElementById("enabled-toggle").disabled = true;
-		document.getElementById("merit-weight").disabled = true;
-		document.getElementById("demerit-weight").disabled = true;
-		document.getElementById("max-point").disabled = true;
-	}
-	else {
-		document.getElementById("blocked-list").disabled = false;
-		document.getElementById("enabled-toggle").disabled = false;
-		document.getElementById("merit-weight").disabled = false;
-		document.getElementById("demerit-weight").disabled = false;
-		document.getElementById("max-point").disabled = false;
-		updateBadge();
-	}
 }
 
 blockedList.placeholder = [
@@ -64,6 +32,7 @@ blockedList.placeholder = [
 
 blockedList.addEventListener("change", (event) => {
 	const blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+
 	chrome.storage.local.set({
 		blocked
 	});
@@ -117,6 +86,24 @@ resetAfterClosureToggle.addEventListener("change", (event) => {
 	});
 });
 
+function block_settings(setting_enabled){
+	if (setting_enabled){
+		document.getElementById("blocked-list").disabled = true;
+		document.getElementById("enabled-toggle").disabled = true;
+		document.getElementById("merit-weight").disabled = true;
+		document.getElementById("demerit-weight").disabled = true;
+		document.getElementById("max-point").disabled = true;
+	}
+	else {
+		document.getElementById("blocked-list").disabled = false;
+		document.getElementById("enabled-toggle").disabled = false;
+		document.getElementById("merit-weight").disabled = false;
+		document.getElementById("demerit-weight").disabled = false;
+		document.getElementById("max-point").disabled = false;
+		updateBadge();
+	}
+}
+
 settingEnabled.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
 
@@ -131,25 +118,6 @@ settingEnabled.addEventListener("click", (event) => {
 	}
 
 	block_settings(setting_enabled);
-});
-
-autofill.addEventListener("click", (event) => {
-	const autofill_enabled = event.target.checked;
-
-	chrome.storage.local.set({
-		autofill_enabled
-	});
-
-	if(autofill_enabled){
-		for(let i = 0; i < COMMON_DISTRACTORS.length; i++){
-			blockedList.value += COMMON_DISTRACTORS[i] + "\n";
-			const blocked = blockedList.value.split("\n").map(s => s.trim()).filter(Boolean);
-			chrome.storage.local.set({
-				blocked
-			});
-		}
-		document.getElementById("autofill").disabled = true;
-	}
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -178,7 +146,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// enabled
 		enabledToggle.checked = enabled;
-		
+
 		// meritWeight
 		if(merit_weight == null || merit_weight == ""){
 			chrome.storage.local.set({

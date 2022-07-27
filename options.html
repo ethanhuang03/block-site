@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Smart Block Site</title>
+    <title>Smart Block Site Options</title>
     <link rel="stylesheet" href="common.css" />
     <style>
       body:not(.ready) #blocked-list::placeholder,
@@ -108,6 +108,13 @@
 
     <div id="controls">
       <div>
+        <span class="tooltip">
+          <label for="autofill">Autofill Common Sites</label>
+          <span class="tooltiptext">Autofills block sites with common distractors.</span>
+          <input id="autofill" type="checkbox" />
+        </span>
+      </div>
+      <div>
         <label for="resolution-select">What to do when a site is blocked?</label>
         <select id="resolution-select">
           <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
@@ -116,13 +123,13 @@
       </div>
 
       <div>
-        <label for="enabled-toggle">Enabled?</label>
+        <label for="enabled-toggle">Enabled Blocker?</label>
         <input id="enabled-toggle" type="checkbox" />
       </div>
 
       <span class="tooltip">
         <label for="merit-weight">Merit Weight</label>
-        <span class="tooltiptext">Points added per second on merit sites.</span>
+        <span class="tooltiptext">Points added per minute on merit sites.</span>
       </span>
       <div>
         <input id="merit-weight" type="number" min="0" value="1" />
@@ -130,12 +137,13 @@
       
       <span class="tooltip">
         <label for="demerit-weight">Demerit Weight</label>
-        <span class="tooltiptext">Points subtracted per second on demerit sites.</span>
+        <span class="tooltiptext">Points subtracted per minute on demerit sites.</span>
       </span>
       <div>
         <input id="demerit-weight" type="number" min="0" value="1" />
       </div>
 
+      <h3>Optional Settings</h3>
       <span class="tooltip">
         <label for="max-point">Max Point Accumulated</label>
         <span class="tooltiptext">A limit to points accumulated. OPTIONAl.</span>
