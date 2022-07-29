@@ -2,6 +2,15 @@
 
 /* global chrome */
 
+const extensionApi =
+    (typeof browser === 'object' &&
+     typeof browser.runtime === 'object' &&
+     typeof browser.runtime.getManifest === 'function') ? browser
+      : (typeof chrome === 'object' &&
+     typeof chrome.runtime === 'object' &&
+     typeof chrome.runtime.getManifest === 'function') ? chrome
+        : console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
+
 const CLOSE_TAB = "CLOSE_TAB";
 const SHOW_BLOCKED_INFO_PAGE = "SHOW_BLOCKED_INFO_PAGE";
 
@@ -9,35 +18,6 @@ const RESOLUTIONS = [
 	SHOW_BLOCKED_INFO_PAGE,
 	CLOSE_TAB,
 ];
-
-
-chrome.runtime.onInstalled.addListener(function() {
-	chrome.storage.local.get(["enabled", "blocked", "resolution"], function(local) {
-		if (typeof local.enabled !== "boolean") {
-			chrome.storage.local.set({
-				enabled: false
-			});
-		}
-
-		if (!Array.isArray(local.blocked)) {
-			chrome.storage.local.set({
-				blocked: []
-			});
-		}
-
-		if (!RESOLUTIONS.includes(local.resolution)) {
-			chrome.storage.local.set({
-				resolution: CLOSE_TAB
-			});
-		}
-	});
-
-	chrome.storage.local.set({
-		score: 0
-	});
-
-	chrome.tabs.create({url:chrome.runtime.getURL("options.html")});
-});
 
 const __removeProtocol = (url) => url.replace(/^http(s?):\/\//, "");
 const __removeWww = (url) => url.replace(/^www\./, "");
@@ -72,9 +52,79 @@ const getRules = (blocked) => {
 	return rules;
 };
 
+extensionApi.runtime.onInstalled.addListener(function() {
+	extensionApi.storage.local.get(["enabled", "blocked", "resolution"], function(local) {
+		if (typeof local.enabled !== "boolean") {
+			extensionApi.storage.local.set({
+				enabled: false
+			});
+		}
+
+		if (!Array.isArray(local.blocked)) {
+			extensionApi.storage.local.set({
+				blocked: []
+			});
+		}
+
+		if (!RESOLUTIONS.includes(local.resolution)) {
+			extensionApi.storage.local.set({
+				resolution: CLOSE_TAB
+			});
+		}
+	});
+
+	extensionApi.storage.local.set({
+		score: 0
+	});
+
+	extensionApi.tabs.create({url:extensionApi.runtime.getURL("src/ui/options.html")});
+});
+
+extensionApi.runtime.onStartup.addListener(function() {
+	extensionApi.storage.local.get("reset_after_closure", function(local) {
+		console.log(local.reset_after_closure);
+		if (local.reset_after_closure == true) {
+			extensionApi.storage.local.set({
+				score: 0
+			});
+		extensionApi.action.setBadgeText({
+			text: "0"
+		});
+	}
+	});
+});
+
+extensionApi.webRequest.onBeforeRequest.addListener(
+	function(details) {
+		extensionApi.tabs.query({}, function(tabs){
+			for (let i = 0; i < tabs.length; i++) {
+				var tab = tabs[i];
+				var tabId = tab.id;
+				var url = tab.url;
+	
+				if (!url || !url.startsWith("http")) {
+					continue;
+				}
+				const normalizedUrl = normalizeUrl(url);
+				extensionApi.storage.local.get(["permanent_blocked", "resolution", "demerit_weight", "score"], function(local) {
+					const permernant_rules = getRules(local.permanent_blocked);
+					const foundPermRule = permernant_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+					if (foundPermRule || !foundPermRule.type === "allow") {
+						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
+					}
+				});
+			}
+		})
+	},
+	{urls: ["<all_urls>"]});
+
+extensionApi.action.setBadgeBackgroundColor({
+	color: "#777"
+});
+
 function updateBadge(){
-	chrome.storage.local.get("score", function(local) {
-		chrome.action.setBadgeText({
+	extensionApi.storage.local.get("score", function(local) {
+		extensionApi.action.setBadgeText({
 			text: local.score.toString(10)
 		});
 		console.log(local.score);
@@ -85,21 +135,21 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 	switch (resolution) {
 		case CLOSE_TAB:
 			if (score > 0 && !permanent_blocked) {
-				chrome.storage.local.set({
+				extensionApi.storage.local.set({
 					score: score - parseFloat(demerit_weight)
 				});
 			} else {
-				chrome.tabs.remove(tabId);
+				extensionApi.tabs.remove(tabId);
 				break;
 			}
 			case SHOW_BLOCKED_INFO_PAGE:
 				if (score > 0 && !permanent_blocked) {
-					chrome.storage.local.set({
+					extensionApi.storage.local.set({
 						score: score - parseFloat(demerit_weight)
 					});
 				} else {
-					chrome.tabs.update(tabId, {
-						url: `${chrome.runtime.getURL("blocked.html")}?url=${url}`
+					extensionApi.tabs.update(tabId, {
+						url: `${extensionApi.runtime.getURL("blocked.html")}?url=${url}`
 					});
 					break;
 				}
@@ -108,7 +158,7 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 
 function updateScore(url, tabId, subtract_only) {
 	const normalizedUrl = normalizeUrl(url);
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -129,11 +179,11 @@ function updateScore(url, tabId, subtract_only) {
 		if (!foundRule || foundRule.type === "allow") {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
-					chrome.storage.local.set({
+					extensionApi.storage.local.set({
 						score: parseFloat(max_point)
 					});
 				} else {
-					chrome.storage.local.set({
+					extensionApi.storage.local.set({
 						score: score + parseFloat(merit_weight)
 					});
 				}
@@ -144,11 +194,11 @@ function updateScore(url, tabId, subtract_only) {
 		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
-					chrome.storage.local.set({
+					extensionApi.storage.local.set({
 						score: parseFloat(max_point)
 					});
 				} else {
-					chrome.storage.local.set({
+					extensionApi.storage.local.set({
 						score: score + parseFloat(merit_weight)
 					});
 				}
@@ -160,7 +210,7 @@ function updateScore(url, tabId, subtract_only) {
 }
 
 function main() {
-	chrome.tabs.query({
+	extensionApi.tabs.query({
 		active: true,
 		currentWindow: true
 	}, function(tabs) {
@@ -177,7 +227,7 @@ function main() {
 
 	// keep on deducting points even if tab is not active
 
-	chrome.tabs.query({
+	extensionApi.tabs.query({
 		active: false
 	}, function(tabs) {
 		for (let i = 0; i < tabs.length; i++) {
@@ -196,80 +246,10 @@ function main() {
 	updateBadge();
 }
 
-chrome.runtime.onStartup.addListener(function() {
-	chrome.storage.local.get("reset_after_closure", function(local) {
-		console.log(local.reset_after_closure);
-		if (local.reset_after_closure == true) {
-			chrome.storage.local.set({
-				score: 0
-			});
-		chrome.action.setBadgeText({
-			text: "0"
-		});
-	}
-	});
-});
-
-chrome.webRequest.onBeforeRequest.addListener(
-	function(details) {
-		chrome.tabs.query({}, function(tabs){
-			for (let i = 0; i < tabs.length; i++) {
-				var tab = tabs[i];
-				var tabId = tab.id;
-				var url = tab.url;
-	
-				if (!url || !url.startsWith("http")) {
-					continue;
-				}
-				const normalizedUrl = normalizeUrl(url);
-				chrome.storage.local.get(["permanent_blocked", "resolution", "demerit_weight", "score"], function(local) {
-					const permernant_rules = getRules(local.permanent_blocked);
-					const foundPermRule = permernant_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-					if (foundPermRule || !foundPermRule.type === "allow") {
-						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
-					}
-				});
-			}
-		})
-	},
-	{urls: ["<all_urls>"]});
-
-chrome.action.setBadgeBackgroundColor({
-	color: "#777"
-});
-
-/*
-//SERVICE WORKER WORKAROUND
-function asyncDelay(msToDelay) {
-	return new Promise((success, failure) => {
-		var completionTime = new Date().getTime() + msToDelay
-		while (true) {
-		  if (new Date().getTime() >= completionTime){
-			success()
-			break
-		  }
-		}
-		failure()
-	})
-}
-
-async function run() {
-	for(let i = 0; i < 60; i++) {
-		main();
-		await asyncDelay(1000);
-		chrome.alarms.create(`delay${i}`, { periodInMinutes:1 });
-	}
-}
-
-chrome.alarms.onAlarm.addListener(() => {
-	main();
-})
-*/
-
 updateBadge();
 main();
-chrome.alarms.create("delay", { periodInMinutes: 1 });
-chrome.alarms.onAlarm.addListener((alarms) => {
+extensionApi.alarms.create("delay", { periodInMinutes: 1 / 60 });
+extensionApi.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
 		main();
 	}

@@ -10,9 +10,9 @@
     "default_icon": {
       "128": "images/icon.png"
     },
-    "default_popup": "popup.html"
+    "default_popup": "src/ui/popup.html"
   },
-  "options_page": "options.html",
+  "options_page": "src/ui/options.html",
   "permissions": [
     "storage",
     "tabs",
@@ -23,6 +23,6 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   }
 }

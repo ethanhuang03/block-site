@@ -20,6 +20,7 @@ function updateBadge(){
 	});
 }
 
+maxPoint.placeholder = "60";
 blockedList.placeholder = [
 	"youtube.com",
 	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",

@@ -43,6 +43,7 @@ function block_settings(setting_enabled){
 		document.getElementById("merit-weight").disabled = true;
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
+		document.getElementById("permanent-blocked-list").disabled = true;
 	}
 	else {
 		document.getElementById("blocked-list").disabled = false;
@@ -50,10 +51,12 @@ function block_settings(setting_enabled){
 		document.getElementById("merit-weight").disabled = false;
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
+		document.getElementById("permanent-blocked-list").disabled = false;
 		updateBadge();
 	}
 }
 
+maxPoint.placeholder = "60";
 blockedList.placeholder = [
 	"youtube.com",
 	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",
