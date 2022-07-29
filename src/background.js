@@ -3,13 +3,13 @@
 /* global chrome */
 
 const extensionApi =
-    (typeof browser === 'object' &&
-     typeof browser.runtime === 'object' &&
-     typeof browser.runtime.getManifest === 'function') ? browser
-      : (typeof chrome === 'object' &&
-     typeof chrome.runtime === 'object' &&
-     typeof chrome.runtime.getManifest === 'function') ? chrome
-        : console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
+	(typeof browser === 'object' &&
+		typeof browser.runtime === 'object' &&
+		typeof browser.runtime.getManifest === 'function') ? browser :
+	(typeof chrome === 'object' &&
+		typeof chrome.runtime === 'object' &&
+		typeof chrome.runtime.getManifest === 'function') ? chrome :
+	console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
 
 const CLOSE_TAB = "CLOSE_TAB";
 const SHOW_BLOCKED_INFO_PAGE = "SHOW_BLOCKED_INFO_PAGE";
@@ -77,7 +77,9 @@ extensionApi.runtime.onInstalled.addListener(function() {
 		score: 0
 	});
 
-	extensionApi.tabs.create({url:extensionApi.runtime.getURL("src/ui/options.html")});
+	extensionApi.tabs.create({
+		url: extensionApi.runtime.getURL("src/ui/options.html")
+	});
 });
 
 extensionApi.runtime.onStartup.addListener(function() {
@@ -87,21 +89,21 @@ extensionApi.runtime.onStartup.addListener(function() {
 			extensionApi.storage.local.set({
 				score: 0
 			});
-		extensionApi.action.setBadgeText({
-			text: "0"
-		});
-	}
+			extensionApi.action.setBadgeText({
+				text: "0"
+			});
+		}
 	});
 });
 
 extensionApi.webRequest.onBeforeRequest.addListener(
 	function(details) {
-		extensionApi.tabs.query({}, function(tabs){
+		extensionApi.tabs.query({}, function(tabs) {
 			for (let i = 0; i < tabs.length; i++) {
 				var tab = tabs[i];
 				var tabId = tab.id;
 				var url = tab.url;
-	
+
 				if (!url || !url.startsWith("http")) {
 					continue;
 				}
@@ -115,14 +117,15 @@ extensionApi.webRequest.onBeforeRequest.addListener(
 				});
 			}
 		})
-	},
-	{urls: ["<all_urls>"]});
+	}, {
+		urls: ["<all_urls>"]
+	});
 
 extensionApi.action.setBadgeBackgroundColor({
 	color: "#777"
 });
 
-function updateBadge(){
+function updateBadge() {
 	extensionApi.storage.local.get("score", function(local) {
 		extensionApi.action.setBadgeText({
 			text: local.score.toString(10)
@@ -217,11 +220,11 @@ function main() {
 		var activeTab = tabs[0];
 		var url = activeTab.url
 		var tabId = activeTab.id;
-		
+
 		if (!url || !url.startsWith("http")) {
 			return;
 		}
-	
+
 		updateScore(url, tabId, false);
 	});
 
@@ -248,10 +251,11 @@ function main() {
 
 updateBadge();
 main();
-extensionApi.alarms.create("delay", { periodInMinutes: 1 / 60 });
+extensionApi.alarms.create("delay", {
+	periodInMinutes: 1 / 60
+});
 extensionApi.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
 		main();
 	}
 });
-
