@@ -273,7 +273,7 @@ function main() {
 updateBadge();
 main();
 extensionApi.alarms.create("delay", {
-	periodInMinutes: 1 / 60
+	periodInMinutes: 1
 });
 extensionApi.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
