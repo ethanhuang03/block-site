@@ -13,6 +13,7 @@ const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 const settingEnabled = document.getElementById("setting-enabled");
 const autofill = document.getElementById("autofill");
+const blockAdult = document.getElementById("block-adult");
 
 
 const COMMON_DISTRACTORS = [
@@ -44,6 +45,7 @@ function block_settings(setting_enabled){
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
 		document.getElementById("permanent-blocked-list").disabled = true;
+		document.getElementById("block-adult").disabled = true;
 	}
 	else {
 		document.getElementById("blocked-list").disabled = false;
@@ -52,6 +54,7 @@ function block_settings(setting_enabled){
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
 		document.getElementById("permanent-blocked-list").disabled = false;
+		document.getElementById("block-adult").disabled = false;
 		updateBadge();
 	}
 }
@@ -164,8 +167,16 @@ autofill.addEventListener("click", (event) => {
 	}
 });
 
+blockAdult.addEventListener("change", (event) => {
+	const block_adult = event.target.checked;
+
+	chrome.storage.local.set({
+		block_adult
+	});
+});
+
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked"], function(local) {
+	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult"], function(local) {
 		const {
 			enabled,
 			blocked,
@@ -175,7 +186,8 @@ window.addEventListener("DOMContentLoaded", () => {
 			max_point,
 			reset_after_closure,
 			setting_enabled,
-			permanent_blocked
+			permanent_blocked,
+			block_adult
 		} = local;
 
 		if (!Array.isArray(blocked)) {
@@ -227,6 +239,9 @@ window.addEventListener("DOMContentLoaded", () => {
 		// settingEnabled
 		settingEnabled.checked = setting_enabled;
 		block_settings(setting_enabled);
+
+		// blockAdult
+		blockAdult.checked = block_adult;
 
 		// UI ready
 		document.body.classList.add("ready");
