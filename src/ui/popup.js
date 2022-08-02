@@ -2,6 +2,15 @@
 
 /* global chrome, window, document */
 
+const extensionApi =
+	(typeof browser === 'object' &&
+		typeof browser.runtime === 'object' &&
+		typeof browser.runtime.getManifest === 'function') ? browser :
+	(typeof chrome === 'object' &&
+		typeof chrome.runtime === 'object' &&
+		typeof chrome.runtime.getManifest === 'function') ? chrome :
+	console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
+
 const blockedList = document.getElementById("blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
 const enabledToggle = document.getElementById("enabled-toggle");
@@ -13,8 +22,8 @@ const resetAfterClosureToggle = document.getElementById("reset-after-closure-tog
 const settingEnabled = document.getElementById("setting-enabled");
 
 function updateBadge(){
-	chrome.storage.local.get("score", function(local) {
-		chrome.action.setBadgeText({
+	extensionApi.storage.local.get("score", function(local) {
+		extensionApi.action.setBadgeText({
 			text: local.score.toString(10)
 		});
 	});
@@ -32,17 +41,17 @@ blockedList.placeholder = [
 ].join("\n");
 
 blockedList.addEventListener("change", (event) => {
-	const blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+	const blocked_list = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
 
-	chrome.storage.local.set({
-		blocked
+	extensionApi.storage.local.set({
+		blocked_list
 	});
 });
 
 resolutionSelect.addEventListener("change", (event) => {
 	const resolution = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		resolution
 	});
 });
@@ -50,7 +59,7 @@ resolutionSelect.addEventListener("change", (event) => {
 enabledToggle.addEventListener("change", (event) => {
 	const enabled = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		enabled
 	});
 });
@@ -58,7 +67,7 @@ enabledToggle.addEventListener("change", (event) => {
 meritWeight.addEventListener("change", (event) => {
 	const merit_weight = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		merit_weight
 	});
 });
@@ -66,7 +75,7 @@ meritWeight.addEventListener("change", (event) => {
 demeritWeight.addEventListener("change", (event) => {
 	const demerit_weight = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		demerit_weight
 	});
 });
@@ -74,7 +83,7 @@ demeritWeight.addEventListener("change", (event) => {
 maxPoint.addEventListener("change", (event) => {
 	const max_point = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		max_point
 	});
 });
@@ -82,7 +91,7 @@ maxPoint.addEventListener("change", (event) => {
 resetAfterClosureToggle.addEventListener("change", (event) => {
 	const reset_after_closure = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		reset_after_closure
 	});
 });
@@ -108,12 +117,12 @@ function block_settings(setting_enabled){
 settingEnabled.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		setting_enabled
 	});
 
 	if(!setting_enabled){
-		chrome.storage.local.set({
+		extensionApi.storage.local.set({
 			score: 0
 		});
 	}
@@ -122,10 +131,10 @@ settingEnabled.addEventListener("click", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled"], function(local) {
 		const {
 			enabled,
-			blocked,
+			blocked_list,
 			resolution,
 			merit_weight,
 			demerit_weight,
@@ -134,12 +143,12 @@ window.addEventListener("DOMContentLoaded", () => {
 			setting_enabled
 		} = local;
 
-		if (!Array.isArray(blocked)) {
+		if (!Array.isArray(blocked_list)) {
 			return;
 		}
 
 		// blocked
-		var value = blocked.join("\r\n"); // display every blocked in new line
+		var value = blocked_list.join("\r\n"); // display every blocked in new line
 		blockedList.value = value;
 
 		// resolution
@@ -150,7 +159,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// meritWeight
 		if(merit_weight == null || merit_weight == ""){
-			chrome.storage.local.set({
+			extensionApi.storage.local.set({
 				merit_weight: meritWeight.value
 			});
 		}
@@ -160,7 +169,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// demeritWeight
 		if(demerit_weight == null || demerit_weight == ""){
-			chrome.storage.local.set({
+			extensionApi.storage.local.set({
 				demerit_weight: demeritWeight.value
 			});
 		}

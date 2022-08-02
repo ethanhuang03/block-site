@@ -53,16 +53,16 @@ const getRules = (blocked) => {
 };
 
 extensionApi.runtime.onInstalled.addListener(function() {
-	extensionApi.storage.local.get(["enabled", "blocked", "resolution"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution"], function(local) {
 		if (typeof local.enabled !== "boolean") {
 			extensionApi.storage.local.set({
 				enabled: false
 			});
 		}
 
-		if (!Array.isArray(local.blocked)) {
+		if (!Array.isArray(local.blocked_list)) {
 			extensionApi.storage.local.set({
-				blocked: []
+				blocked_list: []
 			});
 		}
 
@@ -75,6 +75,10 @@ extensionApi.runtime.onInstalled.addListener(function() {
 
 	extensionApi.storage.local.set({
 		score: 0
+	});
+
+	extensionApi.storage.local.set({
+		blocking: true
 	});
 
 	extensionApi.tabs.create({
@@ -108,7 +112,15 @@ extensionApi.webRequest.onBeforeRequest.addListener(
 					continue;
 				}
 				const normalizedUrl = normalizeUrl(url);
-				extensionApi.storage.local.get(["permanent_blocked", "resolution", "demerit_weight", "score"], function(local) {
+				extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "blocking", "resolution", "demerit_weight", "score"], function(local) {
+					if (local.blocking) {
+						const rules = getRules(local.blocked_list);
+						const foundrules = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+						if (foundrules || !foundrules.type === "allow") {
+							block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
+						}
+					}
+
 					const permernant_rules = getRules(local.permanent_blocked);
 					const foundPermRule = permernant_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
 
@@ -130,7 +142,6 @@ extensionApi.action.setBadgeBackgroundColor({
 function block_blacklist(category, blacklist, url, tabId) {
 	const normalizedUrl = normalizeUrl(url);
 	extensionApi.storage.local.get([category, "resolution", "demerit_weight", "score"], function(local) {
-		console.log(local)
 		if (local[category]) {
 			fetch(chrome.runtime.getURL(blacklist))
 				.then(response => response.text())
@@ -156,6 +167,9 @@ function updateBadge() {
 }
 
 function block_website(resolution, url, tabId, score, demerit_weight, permanent_blocked) {
+	extensionApi.storage.local.set({
+		blocking: true
+	});
 	switch (resolution) {
 		case CLOSE_TAB:
 			if (score > 0 && !permanent_blocked) {
@@ -182,10 +196,10 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 
 function updateScore(url, tabId, subtract_only) {
 	const normalizedUrl = normalizeUrl(url);
-	extensionApi.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
 		const {
 			enabled,
-			blocked,
+			blocked_list,
 			resolution,
 			merit_weight,
 			demerit_weight,
@@ -197,7 +211,7 @@ function updateScore(url, tabId, subtract_only) {
 			return;
 		}
 
-		const rules = getRules(blocked);
+		const rules = getRules(blocked_list);
 		const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
 
 		if (!foundRule || foundRule.type === "allow") {
@@ -212,10 +226,13 @@ function updateScore(url, tabId, subtract_only) {
 					});
 				}
 			}
+			extensionApi.storage.local.set({
+				blocking: false
+			});
 			return;
 		}
 
-		if (!Array.isArray(blocked) || blocked.length === 0 || !RESOLUTIONS.includes(resolution)) {
+		if (!Array.isArray(blocked_list) || blocked_list.length === 0 || !RESOLUTIONS.includes(resolution)) {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
 					extensionApi.storage.local.set({
@@ -227,6 +244,9 @@ function updateScore(url, tabId, subtract_only) {
 					});
 				}
 			}
+			extensionApi.storage.local.set({
+				blocking: false
+			});
 			return;
 		}
 		block_website(resolution, url, tabId, score, demerit_weight, false);

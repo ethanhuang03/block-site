@@ -12,7 +12,9 @@
     },
     "default_popup": "src/ui/popup.html"
   },
-  "options_page": "src/ui/options.html",
+  "options_ui": {
+    "page": "src/ui/options.html"
+  },
   "permissions": [
     "storage",
     "tabs",

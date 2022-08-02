@@ -2,6 +2,15 @@
 
 /* global chrome, window, document */
 
+const extensionApi =
+	(typeof browser === 'object' &&
+		typeof browser.runtime === 'object' &&
+		typeof browser.runtime.getManifest === 'function') ? browser :
+	(typeof chrome === 'object' &&
+		typeof chrome.runtime === 'object' &&
+		typeof chrome.runtime.getManifest === 'function') ? chrome :
+	console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
+
 const blockedList = document.getElementById("blocked-list");
 const permanentblockedList = document.getElementById("permanent-blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
@@ -30,8 +39,8 @@ const COMMON_DISTRACTORS = [
 ];
 
 function updateBadge(){
-	chrome.storage.local.get("score", function(local) {
-		chrome.action.setBadgeText({
+	extensionApi.storage.local.get("score", function(local) {
+		extensionApi.action.setBadgeText({
 			text: local.score.toString(10)
 		});
 	});
@@ -71,15 +80,15 @@ blockedList.placeholder = [
 ].join("\n");
 
 blockedList.addEventListener("change", (event) => {
-	const blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
-	chrome.storage.local.set({
-		blocked
+	const blocked_list = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+	extensionApi.storage.local.set({
+		blocked_list
 	});
 });
 
 permanentblockedList.addEventListener("change", (event) => {
 	const permanent_blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		permanent_blocked
 	});
 });
@@ -87,7 +96,7 @@ permanentblockedList.addEventListener("change", (event) => {
 resolutionSelect.addEventListener("change", (event) => {
 	const resolution = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		resolution
 	});
 });
@@ -95,7 +104,7 @@ resolutionSelect.addEventListener("change", (event) => {
 enabledToggle.addEventListener("change", (event) => {
 	const enabled = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		enabled
 	});
 });
@@ -103,7 +112,7 @@ enabledToggle.addEventListener("change", (event) => {
 meritWeight.addEventListener("change", (event) => {
 	const merit_weight = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		merit_weight
 	});
 });
@@ -111,7 +120,7 @@ meritWeight.addEventListener("change", (event) => {
 demeritWeight.addEventListener("change", (event) => {
 	const demerit_weight = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		demerit_weight
 	});
 });
@@ -119,7 +128,7 @@ demeritWeight.addEventListener("change", (event) => {
 maxPoint.addEventListener("change", (event) => {
 	const max_point = event.target.value;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		max_point
 	});
 });
@@ -127,7 +136,7 @@ maxPoint.addEventListener("change", (event) => {
 resetAfterClosureToggle.addEventListener("change", (event) => {
 	const reset_after_closure = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		reset_after_closure
 	});
 });
@@ -135,12 +144,12 @@ resetAfterClosureToggle.addEventListener("change", (event) => {
 settingEnabled.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		setting_enabled
 	});
 
 	if(!setting_enabled){
-		chrome.storage.local.set({
+		extensionApi.storage.local.set({
 			score: 0
 		});
 	}
@@ -151,16 +160,16 @@ settingEnabled.addEventListener("click", (event) => {
 autofill.addEventListener("click", (event) => {
 	const autofill_enabled = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		autofill_enabled
 	});
 
 	if(autofill_enabled){
 		for(let i = 0; i < COMMON_DISTRACTORS.length; i++){
 			blockedList.value += COMMON_DISTRACTORS[i] + "\n";
-			const blocked = blockedList.value.split("\n").map(s => s.trim()).filter(Boolean);
-			chrome.storage.local.set({
-				blocked
+			const blocked_list = blockedList.value.split("\n").map(s => s.trim()).filter(Boolean);
+			extensionApi.storage.local.set({
+				blocked_list
 			});
 		}
 		document.getElementById("autofill").disabled = true;
@@ -170,16 +179,16 @@ autofill.addEventListener("click", (event) => {
 blockAdult.addEventListener("change", (event) => {
 	const block_adult = event.target.checked;
 
-	chrome.storage.local.set({
+	extensionApi.storage.local.set({
 		block_adult
 	});
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	chrome.storage.local.get(["enabled", "blocked", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult"], function(local) {
 		const {
 			enabled,
-			blocked,
+			blocked_list,
 			resolution,
 			merit_weight,
 			demerit_weight,
@@ -190,12 +199,12 @@ window.addEventListener("DOMContentLoaded", () => {
 			block_adult
 		} = local;
 
-		if (!Array.isArray(blocked)) {
+		if (!Array.isArray(blocked_list)) {
 			return;
 		}
 
 		// blocked
-		var value = blocked.join("\r\n"); // display every blocked in new line
+		var value = blocked_list.join("\r\n"); // display every blocked in new line
 		blockedList.value = value;
 
 		if (Array.isArray(permanent_blocked)) {
@@ -212,7 +221,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		
 		// meritWeight
 		if(merit_weight == null || merit_weight == ""){
-			chrome.storage.local.set({
+			extensionApi.storage.local.set({
 				merit_weight: meritWeight.value
 			});
 		}
@@ -222,7 +231,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// demeritWeight
 		if(demerit_weight == null || demerit_weight == ""){
-			chrome.storage.local.set({
+			extensionApi.storage.local.set({
 				demerit_weight: demeritWeight.value
 			});
 		}
