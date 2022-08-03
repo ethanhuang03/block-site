@@ -78,6 +78,15 @@ blockedList.placeholder = [
 	"discord.com",
 	"instagram.com"
 ].join("\n");
+permanentblockedList.placeholder = [
+	"youtube.com",
+	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+	"twitter.com",
+	"facebook.com",
+	"messenger.com",
+	"discord.com",
+	"instagram.com"
+].join("\n");
 
 blockedList.addEventListener("change", (event) => {
 	const blocked_list = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);

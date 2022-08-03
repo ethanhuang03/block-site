@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Smart Block Site",
   "description": "Earn points through productive sites in order to view unproductive sites.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icons": {
     "128": "images/icon.png"
   },
@@ -10,7 +10,7 @@
     "default_icon": {
       "128": "images/icon.png"
     },
-    "default_popup": "src/ui/popup.html"
+    "default_popup": "src/ui/options.html"
   },
   "options_ui": {
     "page": "src/ui/options.html"

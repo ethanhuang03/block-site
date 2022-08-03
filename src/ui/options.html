@@ -3,183 +3,186 @@
   <head>
     <title>Smart Block Site Options</title>
     <link rel="stylesheet" href="common.css" />
-    <style>
-      #permanent-blocked-list {
-        border: 3px solid;
-        outline: none;
-        font-size: inherit;
-        line-height: inherit;
-        white-space: pre;
-      }
-    </style>
   </head>
   <body>
     <h1>Smart Blocker</h1>
-    <p>
-      Specify sites you want to block below. Each site must be on a
-      <strong>separate line</strong>. Sites starting with <code>!</code> will be
-      exception to the rule, allowed.
-    </p>
-
-    <textarea
-      id="blocked-list"
-      rows="10"
-      cols="50"
-      spellcheck="false"
-    ></textarea>
-    <br />
-
-    <div id="controls">
-      <div>
-        <span class="tooltip">
-          <label for="autofill">Autofill Common Sites</label>
-          <span class="tooltiptext">Autofills block sites with common distractors.</span>
-          <input id="autofill" type="checkbox" />
-        </span>
+    <div class="warpper">
+      <input class="radio" id="one" name="group" type="radio" checked>
+      <input class="radio" id="two" name="group" type="radio">
+      <input class="radio" id="three" name="group" type="radio">
+      <input class="radio" id="four" name="group" type="radio">
+      <div class="tabs">
+        <label class="tab" id="one-tab" for="one">Settings</label>
+        <label class="tab" id="two-tab" for="two">Optional Settings</label>
+        <label class="tab" id="three-tab" for="three">Permanent Block List</label>
+        <label class="tab" id="four-tab" for="four">Miscellaneous</label>
       </div>
-      <div>
-        <label for="resolution-select">What to do when a site is blocked?</label>
-        <select id="resolution-select">
-          <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
-          <option value="CLOSE_TAB">Close Tab</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="enabled-toggle">Enabled Blocker?</label>
-        <input id="enabled-toggle" type="checkbox" />
-      </div>
-
-      <span class="tooltip">
-        <label for="merit-weight">Merit Weight</label>
-        <span class="tooltiptext">Points added per minute on merit sites.</span>
-      </span>
-      <div>
-        <input id="merit-weight" type="number" min="0" value="1" />
-      </div>
+      <div class="panels">
+        <div class="panel" id="one-panel">
+          <div class="panel-title">Settings</div>
+          <p>
+            Each site must be on a <strong>separate line</strong>. Sites starting with <code>!</code> will be exception to the rule, allowed.
+          </p>      
+          <textarea
+          id="blocked-list"
+          rows="10"
+          cols="50"
+          spellcheck="false"
+          ></textarea>
+          <br/>
+          <div id="controls">
+            <div>
+              <label for="autofill">Autofill Common Sites</label>
+              <input id="autofill" type="checkbox" />
+            </div>
+            <div>
+              <label for="resolution-select">What to do when a site is blocked?</label>
+              <select id="resolution-select">
+                <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
+                <option value="CLOSE_TAB">Close Tab</option>
+              </select>
+            </div>
       
-      <span class="tooltip">
-        <label for="demerit-weight">Demerit Weight</label>
-        <span class="tooltiptext">Points subtracted per minute on demerit sites.</span>
-      </span>
-      <div>
-        <input id="demerit-weight" type="number" min="0" value="1" />
-      </div>
+            <div>
+              <label for="enabled-toggle">Enabled Blocker?</label>
+              <input id="enabled-toggle" type="checkbox" />
+            </div>
+    
+            <label for="merit-weight">Merit Weight</label>
+            <div>
+              <input id="merit-weight" type="number" min="0" value="1" />
+            </div>
+  
+            <label for="demerit-weight">Demerit Weight</label>
+            <div>
+              <input id="demerit-weight" type="number" min="0" value="1" />
+            </div>      
+          </div>
+        </div>
 
-      <h2>Optional Settings</h2>
-      <span class="tooltip">
-        <label for="max-point">Max Point Accumulated</label>
-        <span class="tooltiptext">A limit to points accumulated. OPTIONAl.</span>
-      </span>
-      <div>
-        <input id="max-point" type="number" min="0" />
-      </div>
-
-      <div>
-        <span class="tooltip">
-          <label for="setting-enabled">Enable/Disable Settings</label>
-          <span class="tooltiptext">Once enabled, points will reset if disabled.</span>
-          <input id="setting-enabled" type="checkbox" />
-        </span>
-      </div>
-
-      <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
-      <input id="reset-after-closure-toggle" type="checkbox" />
-      <br>
-      <h2>Permanent Block List</h2>
-      <p>Specify sites you want to <b>PERMANENTLY</b> block.</p>
-      <textarea
-        id="permanent-blocked-list"
-        rows="10"
-        cols="50"
-        spellcheck="false"
-      ></textarea>
-      <div>
-        <span class="tooltip">
-          <label for="block-adult">Block Adult Sites</label>
-          <span class="tooltiptext">Adult Sites Will Be Blocked</span>
-          <input id="block-adult" type="checkbox" />
-        </span>
-      </div>
+        <div class="panel" id="two-panel">
+          <div class="panel-title">Optional Settings</div>
+          <div id="controls">
+            <span class="tooltip">
+              <label for="max-point">Maximum Point Accumulated</label>
+            </span>
+            <div>
+              <input id="max-point" type="number" min="0" />
+            </div>
       
+            <div>
+              <label for="setting-enabled">Enable/Disable Settings</label>
+              <input id="setting-enabled" type="checkbox" />
+            </div>
+    
+            <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
+            <input id="reset-after-closure-toggle" type="checkbox" />
+          </div>
+        </div>
+
+        <div class="panel" id="three-panel">
+          <div class="panel-title">Permanent Block List</div>
+          <div id="controls">
+            <p>Specify sites you want to <b>PERMANENTLY</b> block.</p>
+            <textarea
+              id="permanent-blocked-list"
+              rows="10"
+              cols="50"
+              spellcheck="false"
+            ></textarea>
+            <div>
+              <label for="block-adult">Block Adult Sites</label>
+              <input id="block-adult" type="checkbox" />
+            </div>
+          </div>
+        </div>
+        <div class="panel" id="four-panel">
+          <div class="panel-title">Miscellaneous</div>
+          <details>
+            <summary>Feature Explanation</summary>
+            <ul>
+              <li>Autofill Common Sites: Autofills block sites with common distractors.</li>
+              <li>Merit Weight: Points added per minute on merit sites.</li>
+              <li>Demerit Weight: Points subtracted per minute on demerit sites.</li>
+              <li>Enable/Disable Settings: Once enabled, points will reset if disabled.</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Contact</summary>
+            <ul>
+              <li>Email: ethanhuang301@gmail.com</li>
+              <li>Discord: NathanHueg#8084</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Credits</summary>
+            <ul>
+              <li>Created by <a target="_blank" href="https://github.com/ethanhuang03">Ethan Huang</a></li>
+              <li>Forked from <a target="_blank" href="https://github.com/penge/block-site">Block Site</a> by <a target="_blank" href="https://github.com/penge">Penge</a></li>
+              <li>Service Worker Workaround <a target="_blank" href="https://github.com/EyeOfMidas/second-tick-extension">here</a></li>
+              <li>Alpha Testers: 
+                <ul>
+                  <li>thanks to Big D</li>
+                </ul>
+              </li>
+            </ul>
+          </details>
+          <details>
+            <summary>License</summary>
+            <ul>
+              <li>
+                MIT License
+                <br><br>
+                Copyright (c) 2022 Ethan Huang
+                <br><br>
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is
+                furnished to do so, subject to the following conditions:
+                <br><br>
+                The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+                <br><br>
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                SOFTWARE.
+              </li>
+              <br><br>
+              <li>
+                MIT License
+                <br><br>
+                Copyright (c) 2019 Pavel Bucka
+                <br><br>
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is
+                furnished to do so, subject to the following conditions:
+                <br><br>
+                The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+                <br><br>
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                SOFTWARE.
+              </li>
+            </ul>
+          </details>
+        </div>
+      </div>
     </div>
-    <details>
-      <summary>Miscellaneous</summary>
-      <ul>
-        <details>
-          <summary>Contact</summary>
-          <ul>
-            <li>Email: ethanhuang301@gmail.com</li>
-            <li>Discord: NathanHueg#8084</li>
-          </ul>
-        </details>
-        <details>
-          <summary>Credits</summary>
-          <ul>
-            <li>Created by <a target="_blank" href="https://github.com/ethanhuang03">Ethan Huang</a></li>
-            <li>Forked from <a target="_blank" href="https://github.com/penge/block-site">Block Site</a> by <a target="_blank" href="https://github.com/penge">Penge</a></li>
-            <li>Service Worker Workaround <a target="_blank" href="https://github.com/EyeOfMidas/second-tick-extension">here</a></li>
-            <li>Alpha Testers: 
-              <ul>
-                <li>thanks to Big D</li>
-              </ul>
-            </li>
-          </ul>
-        </details>
-        <details>
-          <summary>License</summary>
-          <ul>
-            <li>
-              MIT License
-              <br><br>
-              Copyright (c) 2022 Ethan Huang
-              <br><br>
-              Permission is hereby granted, free of charge, to any person obtaining a copy
-              of this software and associated documentation files (the "Software"), to deal
-              in the Software without restriction, including without limitation the rights
-              to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-              copies of the Software, and to permit persons to whom the Software is
-              furnished to do so, subject to the following conditions:
-              <br><br>
-              The above copyright notice and this permission notice shall be included in all
-              copies or substantial portions of the Software.
-              <br><br>
-              THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-              IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-              FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-              AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-              SOFTWARE.
-            </li>
-            <br><br>
-            <li>
-              MIT License
-              <br><br>
-              Copyright (c) 2019 Pavel Bucka
-              <br><br>
-              Permission is hereby granted, free of charge, to any person obtaining a copy
-              of this software and associated documentation files (the "Software"), to deal
-              in the Software without restriction, including without limitation the rights
-              to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-              copies of the Software, and to permit persons to whom the Software is
-              furnished to do so, subject to the following conditions:
-              <br><br>
-              The above copyright notice and this permission notice shall be included in all
-              copies or substantial portions of the Software.
-              <br><br>
-              THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-              IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-              FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-              AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-              SOFTWARE.
-            </li>
-          </ul>
-        </details>
-      </ul>
-    </details>
+
 
     <script src="options.js"></script>
   </body>

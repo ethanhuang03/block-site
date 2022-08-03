@@ -123,8 +123,10 @@ extensionApi.webRequest.onBeforeRequest.addListener(
 					else {
 						rules = getRules(local.permanent_blocked); 
 					}
+					
 					console.log(rules);
 					console.log(normalizedUrl);
+
 					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
 					if (foundRule || !foundRule.type === "allow") {
 						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
@@ -285,7 +287,7 @@ function main() {
 updateBadge();
 main();
 extensionApi.alarms.create("delay", {
-	periodInMinutes: 1/60
+	periodInMinutes: 1
 });
 extensionApi.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
