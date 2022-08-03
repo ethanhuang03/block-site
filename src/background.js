@@ -53,7 +53,7 @@ const getRules = (blocked) => {
 };
 
 extensionApi.runtime.onInstalled.addListener(function() {
-	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution"], function(local) {
+	extensionApi.storage.local.get(["permanent_blocked", "enabled", "blocked_list", "resolution"], function(local) {
 		if (typeof local.enabled !== "boolean") {
 			extensionApi.storage.local.set({
 				enabled: false
@@ -66,6 +66,12 @@ extensionApi.runtime.onInstalled.addListener(function() {
 			});
 		}
 
+		if (!Array.isArray(local.blocked_list)) {
+			extensionApi.storage.local.set({
+				permanent_blocked: []
+			});
+		}
+
 		if (!RESOLUTIONS.includes(local.resolution)) {
 			extensionApi.storage.local.set({
 				resolution: CLOSE_TAB
@@ -75,10 +81,6 @@ extensionApi.runtime.onInstalled.addListener(function() {
 
 	extensionApi.storage.local.set({
 		score: 0
-	});
-
-	extensionApi.storage.local.set({
-		blocking: true
 	});
 
 	extensionApi.tabs.create({
@@ -107,24 +109,24 @@ extensionApi.webRequest.onBeforeRequest.addListener(
 				var tab = tabs[i];
 				var tabId = tab.id;
 				var url = tab.url;
-
+				
 				if (!url || !url.startsWith("http")) {
 					continue;
 				}
 				const normalizedUrl = normalizeUrl(url);
-				extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "blocking", "resolution", "demerit_weight", "score"], function(local) {
-					if (local.blocking) {
-						const rules = getRules(local.blocked_list);
-						const foundrules = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-						if (foundrules || !foundrules.type === "allow") {
-							block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
-						}
+				extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "resolution", "demerit_weight", "score", "enabled"], function(local) {
+					var rules = [];
+					if (local.enabled && local.score <= 0) {
+						rules = getRules(local.blocked_list).concat(getRules(local.permanent_blocked));
+						
 					}
-
-					const permernant_rules = getRules(local.permanent_blocked);
-					const foundPermRule = permernant_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-
-					if (foundPermRule || !foundPermRule.type === "allow") {
+					else {
+						rules = getRules(local.permanent_blocked); 
+					}
+					console.log(rules);
+					console.log(normalizedUrl);
+					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+					if (foundRule || !foundRule.type === "allow") {
 						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
 					}
 				});
@@ -148,8 +150,8 @@ function block_blacklist(category, blacklist, url, tabId) {
 				.then(function(text) {
 					const rules = getRules(text.split(/\r?\n/));
 					console.log(rules)
-					const foundrules = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-					if (foundrules || !foundrules.type === "allow") {
+					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+					if (foundRule || !foundRule.type === "allow") {
 						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
 					}
 				});
@@ -167,9 +169,6 @@ function updateBadge() {
 }
 
 function block_website(resolution, url, tabId, score, demerit_weight, permanent_blocked) {
-	extensionApi.storage.local.set({
-		blocking: true
-	});
 	switch (resolution) {
 		case CLOSE_TAB:
 			if (score > 0 && !permanent_blocked) {
@@ -213,7 +212,6 @@ function updateScore(url, tabId, subtract_only) {
 
 		const rules = getRules(blocked_list);
 		const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-
 		if (!foundRule || foundRule.type === "allow") {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
@@ -226,9 +224,6 @@ function updateScore(url, tabId, subtract_only) {
 					});
 				}
 			}
-			extensionApi.storage.local.set({
-				blocking: false
-			});
 			return;
 		}
 
@@ -244,9 +239,6 @@ function updateScore(url, tabId, subtract_only) {
 					});
 				}
 			}
-			extensionApi.storage.local.set({
-				blocking: false
-			});
 			return;
 		}
 		block_website(resolution, url, tabId, score, demerit_weight, false);
@@ -293,7 +285,7 @@ function main() {
 updateBadge();
 main();
 extensionApi.alarms.create("delay", {
-	periodInMinutes: 1
+	periodInMinutes: 1/60
 });
 extensionApi.alarms.onAlarm.addListener((alarms) => {
 	if (alarms.name === "delay") {
