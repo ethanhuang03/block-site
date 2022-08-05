@@ -104,6 +104,7 @@ extensionApi.runtime.onStartup.addListener(function() {
 
 extensionApi.webRequest.onBeforeRequest.addListener(
 	function(details) {
+		console.log("kile")
 		extensionApi.tabs.query({}, function(tabs) {
 			for (let i = 0; i < tabs.length; i++) {
 				var tab = tabs[i];

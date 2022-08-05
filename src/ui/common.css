@@ -4,7 +4,6 @@ html {
 
 body {
   margin: 5 auto;
-  width: 500px;
   font-family: Calibri, Helvetica, Arial, sans-serif;
   line-height: 150%;
 }
@@ -94,7 +93,7 @@ input[type=number] {
   /*box-shadow: 0 2rem 2rem #00000080;*/
   min-height:200px;
   width:100%;
-  max-width:500px;
+  width:500px;
   overflow:hidden;
   padding:20px;  
 }
