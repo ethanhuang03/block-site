@@ -1,22 +1,20 @@
-DISCLAIMER: THIS IS AN ALPHA SOFTWARE.
+Smart Block Site helps users stay on task through "reward" and "punishment", without outright restricting websites. 
 
-DESCRIPTION: 
-Smart Block Site helps users stay on task through "reward" and "punishment", without outright restricting websites. For everyone "good" site a person is on, they can earn points, which could be used to access distracting sites. 
+For every minute a user is on a "merit site", they can earn points. For every minute a user is on a "demerit site", they lose points. The "demerit site" gets blocked once there are no more points left, and the user has to earn points again to re-access the "demerit site".
 
-This idea stems from how sometimes, people need to access, let's say, YouTube for work or school, but don't want to get distracted afterwards. Other block site only allows the website to be blocked or unblocked. Even if there are time limits, the settings less than ideal and too rigid. This extension offers a dynamic approach to the problem instead.
+Features:
+• Autofill Common Sites: Auto fills block sites with common distractors.
+• Merit Weight: Points added per minute on merit sites.
+• Demerit Weight: Points subtracted per minute on demerit sites.
+• Enable/Disable Settings: Once enabled, points will reset if disabled.
+• Maximum Points Accumulated: 
+• Reset Points After Closure: Once enabled, points will reset if browser is closed.
+• Permanent Block List: Permanently blocks websites. 
+• Block By Category: Permanently block websites by category (adult).
 
-Even if a distracting site is in the background, the counter will still count down.
-
-HOW TO USE: 
-Specify sites you want to block below. Each site must be on a separate line. Sites starting with "!" will be exception to the rule and allowed.
-
-Input a number in merit weight and demerit weight. This number is the number of points that gets incremented / decremented per second when on a good or distracting site.
-
-Max Point Accumulated is optional. It sets a limit to how much points could be accumulated. 
-
-MORE INFORMATION:
+More Information:
 https://github.com/ethanhuang03/block-site
 This project is a fork of: https://github.com/penge/block-site
 
-KNOWN BUGS:
-firefox webRequest.onBeforeRequest not firing
+
+
