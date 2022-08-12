@@ -181,7 +181,6 @@ autofill.addEventListener("click", (event) => {
 				blocked_list
 			});
 		}
-		document.getElementById("autofill").disabled = true;
 	}
 });
 
@@ -194,7 +193,7 @@ blockAdult.addEventListener("change", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled"], function(local) {
 		const {
 			enabled,
 			blocked_list,
@@ -205,7 +204,8 @@ window.addEventListener("DOMContentLoaded", () => {
 			reset_after_closure,
 			setting_enabled,
 			permanent_blocked,
-			block_adult
+			block_adult,
+			autofill_enabled
 		} = local;
 
 		if (!Array.isArray(blocked_list)) {
@@ -260,6 +260,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// blockAdult
 		blockAdult.checked = block_adult;
+
+		// autofill
+		autofill.checked = autofill_enabled;
 
 		// UI ready
 		document.body.classList.add("ready");
