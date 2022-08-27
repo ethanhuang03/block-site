@@ -53,7 +53,7 @@ const getRules = (blocked) => {
 };
 
 function background_blocker() {
-	extensionApi.tabs.query({}, function(tabs) {
+	extensionApi.tabs.query({active: true}, function(tabs) {
 		for (let i = 0; i < tabs.length; i++) {
 			var tab = tabs[i];
 			var tabId = tab.id;
@@ -70,9 +70,6 @@ function background_blocker() {
 					else {
 						rules = getRules(local.permanent_blocked); 
 					}
-
-					console.log(normalizedUrl)
-					console.log(rules);
 		
 					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
 					if (foundRule || !foundRule.type === "allow") {
@@ -80,7 +77,13 @@ function background_blocker() {
 					}
 				});
 			}
-
+		}
+	});
+	extensionApi.tabs.query({}, function(tabs) {
+		for (let i = 0; i < tabs.length; i++) {
+			var tab = tabs[i];
+			var tabId = tab.id;
+			var url = tab.url;  
 			block_blacklist("block_adult", "blacklist/adult.txt", url, tabId);
 		}
 	});
@@ -120,6 +123,7 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 			score: score - parseFloat(demerit_weight)
 		});
 	}
+	updateBadge();
 	if (temp_score <= 0 || permanent_blocked) {
 		switch (resolution) {
 			case CLOSE_TAB:
@@ -136,7 +140,7 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 
 function updateScore(url, tabId, subtract_only) {
 	const normalizedUrl = normalizeUrl(url);
-	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "permanent_blocked"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "is_idle"], function(local) {
 		const {
 			enabled,
 			blocked_list,
@@ -144,7 +148,8 @@ function updateScore(url, tabId, subtract_only) {
 			merit_weight,
 			demerit_weight,
 			max_point,
-			score
+			score, 
+			is_idle
 		} = local;
 
 		if (!enabled) {
@@ -159,7 +164,7 @@ function updateScore(url, tabId, subtract_only) {
 					extensionApi.storage.local.set({
 						score: parseFloat(max_point)
 					});
-				} else {
+				} else if(!is_idle){
 					extensionApi.storage.local.set({
 						score: score + parseFloat(merit_weight)
 					});
@@ -174,7 +179,7 @@ function updateScore(url, tabId, subtract_only) {
 					extensionApi.storage.local.set({
 						score: parseFloat(max_point)
 					});
-				} else {
+				} else if(!is_idle){
 					extensionApi.storage.local.set({
 						score: score + parseFloat(merit_weight)
 					});
@@ -227,7 +232,7 @@ updateBadge();
 main();
 
 extensionApi.alarms.create("delay", {
-	periodInMinutes: 1/60
+	periodInMinutes: 1
 });
 
 extensionApi.alarms.onAlarm.addListener((alarms) => {
@@ -267,6 +272,10 @@ extensionApi.runtime.onInstalled.addListener(function() {
 		score: 0
 	});
 
+	extensionApi.storage.local.set({
+		is_idle: false
+	});
+
 	extensionApi.tabs.create({
 		url: extensionApi.runtime.getURL("src/ui/options.html")
 	});
@@ -283,6 +292,28 @@ extensionApi.runtime.onStartup.addListener(function() {
 			});
 		}
 	});
+});
+
+extensionApi.idle.setDetectionInterval(15);
+extensionApi.idle.onStateChanged.addListener(function(newState) {
+	if(newState === "active") {
+		extensionApi.storage.local.set({
+			is_idle: false
+		});
+		extensionApi.action.setBadgeBackgroundColor({
+			color: "#777"
+		});		
+		console.log("NOT IDLE");
+	}
+	else {
+		extensionApi.storage.local.set({
+			is_idle: true
+		});
+		extensionApi.action.setBadgeBackgroundColor({
+			color: "#fd180b"
+		});		
+		console.log("IS IDLE");
+	}
 });
 
 extensionApi.tabs.onActivated.addListener(

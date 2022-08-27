@@ -19,7 +19,8 @@
     "storage",
     "tabs",
     "alarms",
-    "webRequest"
+    "webRequest",
+    "idle"
   ],
   "host_permissions": [
     "<all_urls>"

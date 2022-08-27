@@ -20,7 +20,7 @@
     "tabs",
     "alarms",
     "webRequest",
-    "webNavigation"
+    "idle"
   ],
   "host_permissions": [
     "<all_urls>"
