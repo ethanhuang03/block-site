@@ -58,32 +58,27 @@ function background_blocker() {
 			var tab = tabs[i];
 			var tabId = tab.id;
 			var url = tab.url;
-			
-			if (url || url.startsWith("http")) {
-				const normalizedUrl = normalizeUrl(url);
-				extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "resolution", "demerit_weight", "score", "enabled"], function(local) {
-					var rules = [];
-					if (local.enabled && local.score <= 0) {
-						rules = getRules(local.blocked_list).concat(getRules(local.permanent_blocked));
-						
-					}
-					else {
-						rules = getRules(local.permanent_blocked); 
-					}
-		
-					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-					if (foundRule || !foundRule.type === "allow") {
-						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
-					}
-				});
+
+			if (!url || !url.startsWith("http")) {
+				continue;
 			}
-		}
-	});
-	extensionApi.tabs.query({}, function(tabs) {
-		for (let i = 0; i < tabs.length; i++) {
-			var tab = tabs[i];
-			var tabId = tab.id;
-			var url = tab.url;  
+			const normalizedUrl = normalizeUrl(url);
+			extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "resolution", "demerit_weight", "score", "enabled"], function(local) {
+				var rules = [];
+				if (local.enabled && local.score <= 0) {
+					rules = getRules(local.blocked_list).concat(getRules(local.permanent_blocked));
+					
+				}
+				else {
+					rules = getRules(local.permanent_blocked); 
+				}
+	
+				const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+				if (foundRule || !foundRule.type === "allow") {
+					block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
+				}
+			});
+
 			block_blacklist("block_adult", "blacklist/adult.txt", url, tabId);
 		}
 	});
@@ -232,7 +227,7 @@ updateBadge();
 main();
 
 extensionApi.alarms.create("delay", {
-	periodInMinutes: 1
+	periodInMinutes: 1/60
 });
 
 extensionApi.alarms.onAlarm.addListener((alarms) => {
