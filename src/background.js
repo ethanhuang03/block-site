@@ -74,9 +74,10 @@ function background_blocker() {
 				}
 	
 				const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-				if (foundRule || !foundRule.type === "allow") {
-					block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
+				if (!foundRule || foundRule.type === "allow") {
+					return;
 				}
+				block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
 			});
 
 			block_blacklist("block_adult", "blacklist/adult.txt", url, tabId);
@@ -168,20 +169,6 @@ function updateScore(url, tabId, subtract_only) {
 			return;
 		}
 
-		if (!Array.isArray(blocked_list) || blocked_list.length === 0 || !RESOLUTIONS.includes(resolution)) {
-			if (!subtract_only) {
-				if (score >= parseFloat(max_point)) {
-					extensionApi.storage.local.set({
-						score: parseFloat(max_point)
-					});
-				} else if(!is_idle){
-					extensionApi.storage.local.set({
-						score: score + parseFloat(merit_weight)
-					});
-				}
-			}
-			return;
-		}
 		block_website(resolution, url, tabId, score, demerit_weight, false);
 	});
 }
