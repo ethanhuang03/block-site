@@ -6,6 +6,8 @@
   </head>
   <body>
     <h1>Smart Blocker</h1>
+    <button class="big-button" id="enable-button">Enable Blocker?</button>
+    <br>
     <div class="warpper">
       <input class="radio" id="one" name="group" type="radio" checked>
       <input class="radio" id="two" name="group" type="radio">
@@ -23,12 +25,7 @@
           <p>
             Each site must be on a <strong>separate line</strong>. Sites starting with <code>!</code> will be exception to the rule, allowed.
           </p>      
-          <textarea
-          id="blocked-list"
-          rows="10"
-          cols="50"
-          spellcheck="false"
-          ></textarea>
+          <textarea id="blocked-list" rows="10" cols="50" spellcheck="false"></textarea>
           <br/>
           <div id="controls">
             <div>
@@ -41,13 +38,7 @@
                 <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
                 <option value="CLOSE_TAB">Close Tab</option>
               </select>
-            </div>
-      
-            <div>
-              <label for="enabled-toggle">Enabled Blocker?</label>
-              <input id="enabled-toggle" type="checkbox" />
-            </div>
-    
+            </div>    
             <label for="merit-weight">Merit Weight</label>
             <div>
               <input id="merit-weight" type="number" min="0" value="1" />

@@ -14,7 +14,7 @@ const extensionApi =
 const blockedList = document.getElementById("blocked-list");
 const permanentblockedList = document.getElementById("permanent-blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
-const enabledToggle = document.getElementById("enabled-toggle");
+const enabledButton = document.getElementById("enable-button");
 
 const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
@@ -49,21 +49,23 @@ function updateBadge(){
 function block_settings(setting_enabled){
 	if (setting_enabled){
 		document.getElementById("blocked-list").disabled = true;
-		document.getElementById("enabled-toggle").disabled = true;
+		document.getElementById("enable-button").disabled = true;
 		document.getElementById("merit-weight").disabled = true;
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
 		document.getElementById("permanent-blocked-list").disabled = true;
 		document.getElementById("block-adult").disabled = true;
+		document.getElementById("enable-button").style.backgroundColor = "#ddd";
 	}
 	else {
 		document.getElementById("blocked-list").disabled = false;
-		document.getElementById("enabled-toggle").disabled = false;
+		document.getElementById("enable-button").disabled = false;
 		document.getElementById("merit-weight").disabled = false;
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
 		document.getElementById("permanent-blocked-list").disabled = false;
 		document.getElementById("block-adult").disabled = false;
+		document.getElementById("enable-button").style.backgroundColor = "black";
 		updateBadge();
 	}
 }
@@ -110,12 +112,19 @@ resolutionSelect.addEventListener("change", (event) => {
 	});
 });
 
-enabledToggle.addEventListener("change", (event) => {
-	const enabled = event.target.checked;
-
-	extensionApi.storage.local.set({
-		enabled
-	});
+enabledButton.addEventListener("click", (event) => {
+	if(enabledButton.innerHTML === "Disable Blocker?"){
+		enabledButton.innerHTML = "Enable Blocker?"
+		extensionApi.storage.local.set({
+			enabled: false
+		});
+	}
+	else {
+		enabledButton.innerHTML = "Disable Blocker?"
+		extensionApi.storage.local.set({
+			enabled: true
+		});
+	} 
 });
 
 meritWeight.addEventListener("change", (event) => {
@@ -226,7 +235,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		resolutionSelect.value = resolution;
 
 		// enabled
-		enabledToggle.checked = enabled;
+		enabledButton.innerHTML = enabled ? "Disable Blocker?" : "Enable Blocker?";
+
 		
 		// meritWeight
 		if(merit_weight == null || merit_weight == ""){

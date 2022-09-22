@@ -18,6 +18,11 @@ body:not(.ready) #controls {
   visibility: hidden;
 }
 
+h1 {
+  text-align: center;
+  font-weight:bold
+}
+
 #permanent-blocked-list {
   border: 3px solid;
   outline: none;
@@ -78,7 +83,7 @@ input[type=number] {
 .warpper{
   display:flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
 }
 .tab{
   cursor: pointer;
@@ -130,4 +135,18 @@ input[type=number] {
   background:#fffffff6;
   color:#000;
   border-top: 3px solid #000;
+}
+
+.big-button {
+  display: block;
+  width: 50%;
+  border: none;
+  background-color: #000;
+  margin: 0 auto;
+  color: white;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight:bold;
+  cursor: pointer;
+  text-align: center;
 }
