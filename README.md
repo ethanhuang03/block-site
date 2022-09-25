@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/ethanhuang03/block-site">
-    <img src="images/icon.png" alt="Logo" width="300" height="300">
+    <img src="images/green_shield.png" alt="Logo" width="300" height="300">
   </a>
 
 <h3 align="center">Smart Block Site</h3>
@@ -161,9 +161,11 @@ Project Link: [https://github.com/ethanhuang03/block-site](https://github.com/et
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
-Will update licensing to accomdate for the following repos.
+* Icon Designed By: [EDP](https://www.instagram.com/peng.private/)
 * [Block Site](https://github.com/penge/block-site)
   * The original code this project is based on by Penge
+* Alpha Testers:
+  * Thanks to Big D
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

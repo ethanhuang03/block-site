@@ -14,6 +14,8 @@ const extensionApi =
 const blockedList = document.getElementById("blocked-list");
 const permanentblockedList = document.getElementById("permanent-blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
+
+const buttonImage = document.getElementById("button-image");
 const enabledButton = document.getElementById("enable-button");
 
 const meritWeight = document.getElementById("merit-weight");
@@ -55,7 +57,6 @@ function block_settings(setting_enabled){
 		document.getElementById("max-point").disabled = true;
 		document.getElementById("permanent-blocked-list").disabled = true;
 		document.getElementById("block-adult").disabled = true;
-		document.getElementById("enable-button").style.backgroundColor = "#ddd";
 	}
 	else {
 		document.getElementById("blocked-list").disabled = false;
@@ -65,7 +66,6 @@ function block_settings(setting_enabled){
 		document.getElementById("max-point").disabled = false;
 		document.getElementById("permanent-blocked-list").disabled = false;
 		document.getElementById("block-adult").disabled = false;
-		document.getElementById("enable-button").style.backgroundColor = "black";
 		updateBadge();
 	}
 }
@@ -113,18 +113,18 @@ resolutionSelect.addEventListener("change", (event) => {
 });
 
 enabledButton.addEventListener("click", (event) => {
-	if(enabledButton.innerHTML === "Disable Blocker?"){
-		enabledButton.innerHTML = "Enable Blocker?"
+	if (buttonImage.src === extensionApi.runtime.getURL("images/green_unlocked.png")) {
+		buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png")
 		extensionApi.storage.local.set({
 			enabled: false
 		});
 	}
 	else {
-		enabledButton.innerHTML = "Disable Blocker?"
+		buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png")
 		extensionApi.storage.local.set({
 			enabled: true
 		});
-	} 
+	}
 });
 
 meritWeight.addEventListener("change", (event) => {
@@ -161,6 +161,25 @@ resetAfterClosureToggle.addEventListener("change", (event) => {
 
 settingEnabled.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
+
+	extensionApi.storage.local.get("enabled", function(local) {
+		if (local.enabled) {
+			if (setting_enabled) {
+				buttonImage.src = extensionApi.runtime.getURL("images/green_locked.png");
+			}
+			else {
+				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png");
+			}
+		}
+		else {
+			if (setting_enabled) {
+				buttonImage.src = extensionApi.runtime.getURL("images/red_locked.png");
+			}
+			else {
+				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png");
+			}
+		}
+	});
 
 	extensionApi.storage.local.set({
 		setting_enabled
@@ -235,9 +254,23 @@ window.addEventListener("DOMContentLoaded", () => {
 		resolutionSelect.value = resolution;
 
 		// enabled
-		enabledButton.innerHTML = enabled ? "Disable Blocker?" : "Enable Blocker?";
+		if(enabled){
+			if (setting_enabled) {
+				buttonImage.src = extensionApi.runtime.getURL("images/green_locked.png")
+			}
+			else {
+				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png")
+			}
+		}
+		else {
+			if (setting_enabled) {
+				buttonImage.src = extensionApi.runtime.getURL("images/red_locked.png")
+			}
+			else {
+				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png")
+			}
+		}
 
-		
 		// meritWeight
 		if(merit_weight == null || merit_weight == ""){
 			extensionApi.storage.local.set({

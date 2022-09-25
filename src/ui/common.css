@@ -136,17 +136,3 @@ input[type=number] {
   color:#000;
   border-top: 3px solid #000;
 }
-
-.big-button {
-  display: block;
-  width: 50%;
-  border: none;
-  background-color: #000;
-  margin: 0 auto;
-  color: white;
-  padding: 14px 28px;
-  font-size: 14px;
-  font-weight:bold;
-  cursor: pointer;
-  text-align: center;
-}

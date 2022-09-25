@@ -284,8 +284,9 @@ extensionApi.idle.onStateChanged.addListener(function(newState) {
 		});
 		extensionApi.action.setBadgeBackgroundColor({
 			color: "#777"
-		});		
-		console.log("NOT IDLE");
+		});
+		extensionApi.action.setIcon({ path: {128: "images/green_shield.png"} });	
+		console.log("NOT IDLE"); 
 	}
 	else {
 		extensionApi.storage.local.set({
@@ -293,7 +294,8 @@ extensionApi.idle.onStateChanged.addListener(function(newState) {
 		});
 		extensionApi.action.setBadgeBackgroundColor({
 			color: "#fd180b"
-		});		
+		});
+		extensionApi.action.setIcon({ path: {128: "images/red_shield.png"} });
 		console.log("IS IDLE");
 	}
 });
