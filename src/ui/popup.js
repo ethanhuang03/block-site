@@ -103,6 +103,15 @@ resetAfterClosureToggle.addEventListener("change", (event) => {
 	});
 });
 
+resolutionSelect.addEventListener("change", (event) => {
+	const resolution = event.target.value;
+
+	extensionApi.storage.local.set({
+		resolution
+	});
+});
+
+
 settingEnabled.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
 

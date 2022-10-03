@@ -115,8 +115,11 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 	var temp_score = score;
 	if (score > 0 && !permanent_blocked) {
 		temp_score = score - parseFloat(demerit_weight)
+		if (temp_score < 0) {
+			temp_score = 0;
+		}
 		extensionApi.storage.local.set({
-			score: score - parseFloat(demerit_weight)
+			score: temp_score
 		});
 	}
 	updateBadge();
