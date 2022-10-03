@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Smart Block Site Options</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Smart Blocker</h1>
+    <button id="enable-button" style="border:none; background-color: transparent;"><img id="button-image" src="images/red_shield.png" width="200" height="200"></button>
+    <br>
+
+    <div>
+      <label for="resolution-select">What to do when a site is blocked?</label>
+      <select id="resolution-select">
+        <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
+        <option value="CLOSE_TAB">Close Tab</option>
+      </select>
+    </div>    
+    <label for="merit-weight">Merit Weight</label>
+    <div>
+      <input id="merit-weight" type="number" min="0" value="1" />
+    </div>
+    <label for="demerit-weight">Demerit Weight</label>
+    <div>
+      <input id="demerit-weight" type="number" min="0" value="1" />
+    </div>
+    <div>
+      <label for="max-point">Maximum Point Accumulated</label>
+      <input id="max-point" type="number" min="0" />
+    </div>
+
+    <div>
+      <label for="setting-enabled">Enable/Disable Settings</label>
+      <input id="setting-enabled" type="checkbox" />
+    </div>
+
+    <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
+    <input id="reset-after-closure-toggle" type="checkbox" />
+    <br>
+    <button id="settings-button" style="border:none; background-color: transparent;"><img id="settings-button-image" src="settings.svg" width="30" height="30"></button>
+
+
+    <script src="popup.js"></script>
+  </body>
+</html>

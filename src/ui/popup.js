@@ -11,34 +11,18 @@ const extensionApi =
 		typeof chrome.runtime.getManifest === 'function') ? chrome :
 	console.log('Cannot find extensionApi under namespace "browser" or "chrome"');
 
-const blockedList = document.getElementById("blocked-list");
-const permanentblockedList = document.getElementById("permanent-blocked-list");
 const resolutionSelect = document.getElementById("resolution-select");
 
 const buttonImage = document.getElementById("button-image");
 const enabledButton = document.getElementById("enable-button");
+const settingsButton = document.getElementById("settings-button");
 
 const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
 const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 const settingEnabled = document.getElementById("setting-enabled");
-const autofill = document.getElementById("autofill");
-const blockAdult = document.getElementById("block-adult");
 
-
-const COMMON_DISTRACTORS = [
-	"facebook.com",
-	"twitter.com",
-	"instagram.com",
-	"youtube.com",
-	"reddit.com",
-	"messenger.com",
-	"snapchat.com",
-	"whatsapp.com",
-	"tiktok.com",
-	"discord.com"
-];
 
 function updateBadge(){
 	extensionApi.storage.local.get("score", function(local) {
@@ -50,67 +34,21 @@ function updateBadge(){
 
 function block_settings(setting_enabled){
 	if (setting_enabled){
-		document.getElementById("blocked-list").disabled = true;
 		document.getElementById("enable-button").disabled = true;
 		document.getElementById("merit-weight").disabled = true;
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
-		document.getElementById("permanent-blocked-list").disabled = true;
-		document.getElementById("block-adult").disabled = true;
 	}
 	else {
-		document.getElementById("blocked-list").disabled = false;
 		document.getElementById("enable-button").disabled = false;
 		document.getElementById("merit-weight").disabled = false;
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
-		document.getElementById("permanent-blocked-list").disabled = false;
-		document.getElementById("block-adult").disabled = false;
 		updateBadge();
 	}
 }
 
 maxPoint.placeholder = "60";
-blockedList.placeholder = [
-	"youtube.com",
-	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"twitter.com",
-	"facebook.com",
-	"messenger.com",
-	"discord.com",
-	"instagram.com"
-].join("\n");
-permanentblockedList.placeholder = [
-	"youtube.com",
-	"!https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"twitter.com",
-	"facebook.com",
-	"messenger.com",
-	"discord.com",
-	"instagram.com"
-].join("\n");
-
-blockedList.addEventListener("change", (event) => {
-	const blocked_list = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
-	extensionApi.storage.local.set({
-		blocked_list
-	});
-});
-
-permanentblockedList.addEventListener("change", (event) => {
-	const permanent_blocked = event.target.value.split("\n").map(s => s.trim()).filter(Boolean);
-	extensionApi.storage.local.set({
-		permanent_blocked
-	});
-});
-
-resolutionSelect.addEventListener("change", (event) => {
-	const resolution = event.target.value;
-
-	extensionApi.storage.local.set({
-		resolution
-	});
-});
 
 enabledButton.addEventListener("click", (event) => {
 	if (buttonImage.src === extensionApi.runtime.getURL("images/green_unlocked.png")) {
@@ -125,6 +63,12 @@ enabledButton.addEventListener("click", (event) => {
 			enabled: true
 		});
 	}
+});
+
+settingsButton.addEventListener("click", (event) => {
+	extensionApi.tabs.create({
+		url: extensionApi.runtime.getURL("src/ui/settings.html")
+	});
 });
 
 meritWeight.addEventListener("change", (event) => {
@@ -194,61 +138,17 @@ settingEnabled.addEventListener("click", (event) => {
 	block_settings(setting_enabled);
 });
 
-autofill.addEventListener("click", (event) => {
-	const autofill_enabled = event.target.checked;
-
-	extensionApi.storage.local.set({
-		autofill_enabled
-	});
-
-	if(autofill_enabled){
-		for(let i = 0; i < COMMON_DISTRACTORS.length; i++){
-			blockedList.value += COMMON_DISTRACTORS[i] + "\n";
-			const blocked_list = blockedList.value.split("\n").map(s => s.trim()).filter(Boolean);
-			extensionApi.storage.local.set({
-				blocked_list
-			});
-		}
-	}
-});
-
-blockAdult.addEventListener("change", (event) => {
-	const block_adult = event.target.checked;
-
-	extensionApi.storage.local.set({
-		block_adult
-	});
-});
-
 window.addEventListener("DOMContentLoaded", () => {
 	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled"], function(local) {
 		const {
 			enabled,
-			blocked_list,
 			resolution,
 			merit_weight,
 			demerit_weight,
 			max_point,
 			reset_after_closure,
-			setting_enabled,
-			permanent_blocked,
-			block_adult,
-			autofill_enabled
+			setting_enabled
 		} = local;
-
-		if (!Array.isArray(blocked_list)) {
-			return;
-		}
-
-		// blocked
-		var value = blocked_list.join("\r\n"); // display every blocked in new line
-		blockedList.value = value;
-
-		if (Array.isArray(permanent_blocked)) {
-			// permanent blocked
-			var permanentblocked_list = permanent_blocked.join("\r\n"); // display every permanent blocked in new line
-			permanentblockedList.value = permanentblocked_list;
-		}
 
 		// resolution
 		resolutionSelect.value = resolution;
@@ -300,12 +200,6 @@ window.addEventListener("DOMContentLoaded", () => {
 		// settingEnabled
 		settingEnabled.checked = setting_enabled;
 		block_settings(setting_enabled);
-
-		// blockAdult
-		blockAdult.checked = block_adult;
-
-		// autofill
-		autofill.checked = autofill_enabled;
 
 		// UI ready
 		document.body.classList.add("ready");

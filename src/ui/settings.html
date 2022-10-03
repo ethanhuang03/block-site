@@ -2,26 +2,20 @@
 <html>
   <head>
     <title>Smart Block Site Options</title>
-    <link rel="stylesheet" href="common.css" />
+    <link rel="stylesheet" href="settings.css" />
   </head>
   <body>
     <h1>Smart Blocker</h1>
-    <button id="enable-button" style="border:none; background-color: transparent;"><img id="button-image" src="images/red_shield.png" width="200" height="200"></button>
-    <br>
     <div class="warpper">
       <input class="radio" id="one" name="group" type="radio" checked>
       <input class="radio" id="two" name="group" type="radio">
-      <input class="radio" id="three" name="group" type="radio">
-      <input class="radio" id="four" name="group" type="radio">
       <div class="tabs">
         <label class="tab" id="one-tab" for="one">Settings</label>
-        <label class="tab" id="two-tab" for="two">Optional Settings</label>
-        <label class="tab" id="three-tab" for="three">Permanent Block List</label>
-        <label class="tab" id="four-tab" for="four">Miscellaneous</label>
+        <label class="tab" id="two-tab" for="two">Miscellaneous</label>
       </div>
       <div class="panels">
         <div class="panel" id="one-panel">
-          <div class="panel-title">Settings</div>
+          <div class="panel-title">Block List</div>
           <p>
             Each site must be on a <strong>separate line</strong>. Sites starting with <code>!</code> will be exception to the rule, allowed.
           </p>      
@@ -32,46 +26,8 @@
               <label for="autofill">Autofill Common Sites</label>
               <input id="autofill" type="checkbox" />
             </div>
-            <div>
-              <label for="resolution-select">What to do when a site is blocked?</label>
-              <select id="resolution-select">
-                <option value="SHOW_BLOCKED_INFO_PAGE">Show Blocked info page</option>
-                <option value="CLOSE_TAB">Close Tab</option>
-              </select>
-            </div>    
-            <label for="merit-weight">Merit Weight</label>
-            <div>
-              <input id="merit-weight" type="number" min="0" value="1" />
-            </div>
-  
-            <label for="demerit-weight">Demerit Weight</label>
-            <div>
-              <input id="demerit-weight" type="number" min="0" value="1" />
-            </div>      
           </div>
-        </div>
-
-        <div class="panel" id="two-panel">
-          <div class="panel-title">Optional Settings</div>
-          <div id="controls">
-            <span class="tooltip">
-              <label for="max-point">Maximum Point Accumulated</label>
-            </span>
-            <div>
-              <input id="max-point" type="number" min="0" />
-            </div>
-      
-            <div>
-              <label for="setting-enabled">Enable/Disable Settings</label>
-              <input id="setting-enabled" type="checkbox" />
-            </div>
-    
-            <label for="reset-after-closure-toggle">Reset Points After Closure?</label>
-            <input id="reset-after-closure-toggle" type="checkbox" />
-          </div>
-        </div>
-
-        <div class="panel" id="three-panel">
+          <br>
           <div class="panel-title">Permanent Block List</div>
           <div id="controls">
             <p>Specify sites you want to <b>PERMANENTLY</b> block.</p>
@@ -87,7 +43,7 @@
             </div>
           </div>
         </div>
-        <div class="panel" id="four-panel">
+        <div class="panel" id="two-panel">
           <div class="panel-title">Miscellaneous</div>
           <details>
             <summary>Feature Explanation</summary>
@@ -199,6 +155,6 @@
     </div>
 
 
-    <script src="options.js"></script>
+    <script src="settings.js"></script>
   </body>
 </html>

@@ -10,10 +10,10 @@
     "default_icon": {
       "128": "images/green_shield.png"
     },
-    "default_popup": "src/ui/options.html"
+    "default_popup": "src/ui/popup.html"
   },
   "options_ui": {
-    "page": "src/ui/options.html"
+    "page": "src/ui/settings.html"
   },
   "permissions": [
     "storage",

@@ -259,7 +259,7 @@ extensionApi.runtime.onInstalled.addListener(function() {
 	});
 
 	extensionApi.tabs.create({
-		url: extensionApi.runtime.getURL("src/ui/options.html")
+		url: extensionApi.runtime.getURL("src/ui/settings.html")
 	});
 });
 
