@@ -16,6 +16,7 @@ const resolutionSelect = document.getElementById("resolution-select");
 const buttonImage = document.getElementById("button-image");
 const enabledButton = document.getElementById("enable-button");
 const settingsButton = document.getElementById("settings-button");
+const enabledStatus = document.getElementById("status");
 
 const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
@@ -56,12 +57,14 @@ enabledButton.addEventListener("click", (event) => {
 		extensionApi.storage.local.set({
 			enabled: false
 		});
+		enabledStatus.innerText = "Disabled";
 	}
 	else {
 		buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png")
 		extensionApi.storage.local.set({
 			enabled: true
 		});
+		enabledStatus.innerText = "Enabled";
 	}
 });
 
@@ -119,17 +122,21 @@ settingEnabled.addEventListener("click", (event) => {
 		if (local.enabled) {
 			if (setting_enabled) {
 				buttonImage.src = extensionApi.runtime.getURL("images/green_locked.png");
+				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
 				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png");
+				enabledStatus.innerText = "Enabled";
 			}
 		}
 		else {
 			if (setting_enabled) {
 				buttonImage.src = extensionApi.runtime.getURL("images/red_locked.png");
+				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
 				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png");
+				enabledStatus.innerText = "Disabled";
 			}
 		}
 	});
@@ -166,17 +173,21 @@ window.addEventListener("DOMContentLoaded", () => {
 		if(enabled){
 			if (setting_enabled) {
 				buttonImage.src = extensionApi.runtime.getURL("images/green_locked.png")
+				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
 				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png")
+				enabledStatus.innerText = "Enabled";
 			}
 		}
 		else {
 			if (setting_enabled) {
 				buttonImage.src = extensionApi.runtime.getURL("images/red_locked.png")
+				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
 				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png")
+				enabledStatus.innerText = "Disabled";
 			}
 		}
 
