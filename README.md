@@ -164,6 +164,7 @@ Project Link: [https://github.com/ethanhuang03/block-site](https://github.com/et
 * Icon Designed By: [EDP](https://www.instagram.com/peng.private/)
 * [Block Site](https://github.com/penge/block-site)
   * The original code this project is based on by Penge
+* README Template: [README](https://github.com/othneildrew/Best-README-Template)
 * Alpha Testers:
   * Thanks to Big D
 
