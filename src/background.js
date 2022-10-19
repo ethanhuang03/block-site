@@ -58,27 +58,12 @@ function background_blocker() {
 			var tab = tabs[i];
 			var tabId = tab.id;
 			var url = tab.url;
-
+			
 			if (!url || !url.startsWith("http")) {
 				continue;
 			}
-			const normalizedUrl = normalizeUrl(url);
-			extensionApi.storage.local.get(["permanent_blocked", "blocked_list", "resolution", "demerit_weight", "score", "enabled"], function(local) {
-				var rules = [];
-				if (local.enabled && local.score <= 0) {
-					rules = getRules(local.blocked_list).concat(getRules(local.permanent_blocked));
-					
-				}
-				else {
-					rules = getRules(local.permanent_blocked); 
-				}
-	
-				const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-				if (!foundRule || foundRule.type === "allow") {
-					return;
-				}
-				block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
-			});
+
+			updateScore(url, tabId, true, true);
 
 			block_blacklist("block_adult", "blacklist/adult.txt", url, tabId);
 		}
@@ -111,9 +96,9 @@ function updateBadge() {
 	});
 }
 
-function block_website(resolution, url, tabId, score, demerit_weight, permanent_blocked) {
+function block_website(resolution, url, tabId, score, demerit_weight, permanent_blocked, no_subtract) {
 	var temp_score = score;
-	if (score > 0 && !permanent_blocked) {
+	if (score > 0 && !permanent_blocked && !no_subtract) {
 		temp_score = score - parseFloat(demerit_weight)
 		if (temp_score < 0) {
 			temp_score = 0;
@@ -137,9 +122,9 @@ function block_website(resolution, url, tabId, score, demerit_weight, permanent_
 	}
 }
 
-function updateScore(url, tabId, subtract_only) {
+function updateScore(url, tabId, subtract_only, no_subtract) {
 	const normalizedUrl = normalizeUrl(url);
-	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "is_idle"], function(local) {
+	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "score", "is_idle", "permanent_blocked"], function(local) {
 		const {
 			enabled,
 			blocked_list,
@@ -148,16 +133,27 @@ function updateScore(url, tabId, subtract_only) {
 			demerit_weight,
 			max_point,
 			score, 
-			is_idle
+			is_idle,
+			permanent_blocked
 		} = local;
 
 		if (!enabled) {
 			return;
 		}
 
-		const rules = getRules(blocked_list);
-		const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-		if (!foundRule || foundRule.type === "allow") {
+		const temp_rules = getRules(blocked_list);
+		const perm_rules = getRules(permanent_blocked);
+
+		const temp_foundRule = temp_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+		const perm_foundRule = perm_rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
+
+		if (perm_foundRule && perm_foundRule.type === "block") {
+			block_website(resolution, url, tabId, score, demerit_weight, true, no_subtract);
+		}
+		if (temp_foundRule && temp_foundRule.type === "block") {
+			block_website(resolution, url, tabId, score, demerit_weight, false, no_subtract);
+		}
+		else {
 			if (!subtract_only) {
 				if (score >= parseFloat(max_point)) {
 					extensionApi.storage.local.set({
@@ -171,8 +167,6 @@ function updateScore(url, tabId, subtract_only) {
 			}
 			return;
 		}
-
-		block_website(resolution, url, tabId, score, demerit_weight, false);
 	});
 }
 
@@ -188,8 +182,7 @@ function main() {
 		if (!url || !url.startsWith("http")) {
 			return;
 		}
-
-		updateScore(url, tabId, false);
+		updateScore(url, tabId, false, false);
 	});
 
 	// keep on deducting points even if tab is not active
@@ -205,8 +198,7 @@ function main() {
 			if (!url || !url.startsWith("http")) {
 				continue;
 			}
-
-			updateScore(url, tabId, true);
+			updateScore(url, tabId, true, false);
 		}
 	});
 
