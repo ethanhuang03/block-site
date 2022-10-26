@@ -63,11 +63,8 @@ The Dynamic Website Blocker is a browser extension that uses the concept of “r
 <!-- GETTING STARTED -->
 ## Getting Started
 ### Installation
-#### Install From Chrome
-1. Navigate to link
-    ```
-    https://chrome.google.com/webstore/detail/smart-block-site/cggnglballhnedljhdapcgadnfidbclf
-    ```
+#### Install On Chrome
+1. Click [here](https://chrome.google.com/webstore/detail/smart-block-site/cggnglballhnedljhdapcgadnfidbclf)
 2. Click Install!
 #### Manual Installation
 1. Clone the repo
