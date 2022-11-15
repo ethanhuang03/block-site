@@ -7,7 +7,7 @@
     <img src="images/green_shield.png" alt="Logo" width="300" height="300">
   </a>
 
-<h3 align="center">Smart Block Site</h3>
+<h3 align="center">Dynamic Website Blocker</h3>
 
   <p align="center">
     A dynamic website blocker in order to improve user productivity. 
