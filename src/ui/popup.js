@@ -91,13 +91,12 @@ settingEnabled.addEventListener("click", (event) => {
 				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
-				/*
-				Add password protection
-				Overlay an html page propmting for password
-				if correct, it removes overlay and allow setting_enabled to true
-				if wrong, it removes overlay and reverts setting_enabled to false
-				*/
-				
+				// if has password activate password protection, else skip
+				extensionApi.storage.local.get("password_toggle", function(local) {
+					if (local.password_toggle) {
+						window.location.href="password_protection.html";
+					}
+				});
 				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png");
 				enabledStatus.innerText = "Enabled";
 			}
@@ -108,20 +107,19 @@ settingEnabled.addEventListener("click", (event) => {
 				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
-				/*
-				Add password protection
-				Overlay an html page propmting for password
-				if correct, it removes overlay and allow setting_enabled to true
-				if wrong, it removes overlay and reverts setting_enabled to false
-				*/
-
+				// if has password activate password protection, else skip
+				extensionApi.storage.local.get("password_toggle", function(local) {
+					if (local.password_toggle) {
+						window.location.href="password_protection.html";
+					}
+				});
 				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png");
 				enabledStatus.innerText = "Disabled";
 				
 			}
 		}
 	});
-
+	
 	extensionApi.storage.local.set({
 		setting_enabled
 	});

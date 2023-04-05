@@ -20,6 +20,10 @@ const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
 const maxPoint = document.getElementById("max-point");
 
+const passwordToggle = document.getElementById("password-protection-toggle");
+const passwordInput = document.getElementById("password");
+const saveButton = document.getElementById("save");
+
 maxPoint.placeholder = "60";
 
 const COMMON_DISTRACTORS = [
@@ -51,6 +55,9 @@ function block_settings(setting_enabled){
 		document.getElementById("merit-weight").disabled = true;
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
+		document.getElementById("password-protection-toggle").disabled = true;
+		document.getElementById("password").disabled = true;
+		document.getElementById("save").disabled = true;
 	}
 	else {
 		document.getElementById("blocked-list").disabled = false;
@@ -59,6 +66,9 @@ function block_settings(setting_enabled){
 		document.getElementById("merit-weight").disabled = false;
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
+		document.getElementById("password-protection-toggle").disabled = false;
+		document.getElementById("password").disabled = false;
+		document.getElementById("save").disabled = false;
 		updateBadge();
 	}
 }
@@ -147,8 +157,34 @@ maxPoint.addEventListener("change", (event) => {
 	});
 });
 
+passwordToggle.addEventListener("click", (event) => {
+	const password_toggle = event.target.checked;
+	if (!password_toggle){
+		document.getElementById("password").disabled = true;
+		document.getElementById("save").disabled = true;
+		extensionApi.storage.local.set({
+			password: ""});
+	}
+	else {
+		document.getElementById("password").disabled = false;
+		document.getElementById("save").disabled = false;
+	}
+
+	extensionApi.storage.local.set({
+		password_toggle
+	});
+});
+
+saveButton.addEventListener("click", (event) => {
+	const password_input = passwordInput.value;
+	extensionApi.storage.local.set({
+		password: password_input
+	});
+	passwordInput.value = "";
+});
+
 window.addEventListener("DOMContentLoaded", () => {
-	extensionApi.storage.local.get(["blocked_list", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled", "merit_weight", "demerit_weight", "max_point"], function(local) {
+	extensionApi.storage.local.get(["blocked_list", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled", "merit_weight", "demerit_weight", "max_point", "password_toggle"], function(local) {
 		const {
 			blocked_list,
 			setting_enabled,
@@ -157,7 +193,8 @@ window.addEventListener("DOMContentLoaded", () => {
 			autofill_enabled,
 			merit_weight,
 			demerit_weight,
-			max_point
+			max_point,
+			password_toggle
 		} = local;
 
 		if (!Array.isArray(blocked_list)) {
@@ -205,6 +242,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// maxPoint
 		maxPoint.value = max_point;
+
+		// passwordToggle
+		passwordToggle.checked = password_toggle;
+		if (!password_toggle){
+			document.getElementById("password").disabled = true;
+			document.getElementById("save").disabled = true;
+			extensionApi.storage.local.set({
+				password: ""});
+		}
 
 		// UI ready
 		document.body.classList.add("ready");
