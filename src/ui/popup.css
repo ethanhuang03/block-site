@@ -32,8 +32,3 @@ input[type=checkbox] {
   width: 1.3em;
   height: 1.3em;
 }
-
-input[type=number] {
-  width: 5em;
-  height: 1.3em;
-}

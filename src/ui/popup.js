@@ -18,9 +18,6 @@ const enabledButton = document.getElementById("enable-button");
 const settingsButton = document.getElementById("settings-button");
 const enabledStatus = document.getElementById("status");
 
-const meritWeight = document.getElementById("merit-weight");
-const demeritWeight = document.getElementById("demerit-weight");
-const maxPoint = document.getElementById("max-point");
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
 const settingEnabled = document.getElementById("setting-enabled");
 
@@ -36,20 +33,13 @@ function updateBadge(){
 function block_settings(setting_enabled){
 	if (setting_enabled){
 		document.getElementById("enable-button").disabled = true;
-		document.getElementById("merit-weight").disabled = true;
-		document.getElementById("demerit-weight").disabled = true;
-		document.getElementById("max-point").disabled = true;
 	}
 	else {
 		document.getElementById("enable-button").disabled = false;
-		document.getElementById("merit-weight").disabled = false;
-		document.getElementById("demerit-weight").disabled = false;
-		document.getElementById("max-point").disabled = false;
 		updateBadge();
 	}
 }
 
-maxPoint.placeholder = "60";
 
 enabledButton.addEventListener("click", (event) => {
 	if (buttonImage.src === extensionApi.runtime.getURL("images/green_unlocked.png")) {
@@ -71,30 +61,6 @@ enabledButton.addEventListener("click", (event) => {
 settingsButton.addEventListener("click", (event) => {
 	extensionApi.tabs.create({
 		url: extensionApi.runtime.getURL("src/ui/settings.html")
-	});
-});
-
-meritWeight.addEventListener("change", (event) => {
-	const merit_weight = event.target.value;
-
-	extensionApi.storage.local.set({
-		merit_weight
-	});
-});
-
-demeritWeight.addEventListener("change", (event) => {
-	const demerit_weight = event.target.value;
-
-	extensionApi.storage.local.set({
-		demerit_weight
-	});
-});
-
-maxPoint.addEventListener("change", (event) => {
-	const max_point = event.target.value;
-
-	extensionApi.storage.local.set({
-		max_point
 	});
 });
 
@@ -125,6 +91,13 @@ settingEnabled.addEventListener("click", (event) => {
 				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
+				/*
+				Add password protection
+				Overlay an html page propmting for password
+				if correct, it removes overlay and allow setting_enabled to true
+				if wrong, it removes overlay and reverts setting_enabled to false
+				*/
+				
 				buttonImage.src = extensionApi.runtime.getURL("images/green_unlocked.png");
 				enabledStatus.innerText = "Enabled";
 			}
@@ -135,8 +108,16 @@ settingEnabled.addEventListener("click", (event) => {
 				enabledStatus.innerText = "Settings Locked";
 			}
 			else {
+				/*
+				Add password protection
+				Overlay an html page propmting for password
+				if correct, it removes overlay and allow setting_enabled to true
+				if wrong, it removes overlay and reverts setting_enabled to false
+				*/
+
 				buttonImage.src = extensionApi.runtime.getURL("images/red_unlocked.png");
 				enabledStatus.innerText = "Disabled";
+				
 			}
 		}
 	});
@@ -155,13 +136,10 @@ settingEnabled.addEventListener("click", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	extensionApi.storage.local.get(["enabled", "blocked_list", "resolution", "merit_weight", "demerit_weight", "max_point", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled"], function(local) {
+	extensionApi.storage.local.get(["enabled", "resolution", "reset_after_closure", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled"], function(local) {
 		const {
 			enabled,
 			resolution,
-			merit_weight,
-			demerit_weight,
-			max_point,
 			reset_after_closure,
 			setting_enabled
 		} = local;
@@ -190,29 +168,6 @@ window.addEventListener("DOMContentLoaded", () => {
 				enabledStatus.innerText = "Disabled";
 			}
 		}
-
-		// meritWeight
-		if(merit_weight == null || merit_weight == ""){
-			extensionApi.storage.local.set({
-				merit_weight: meritWeight.value
-			});
-		}
-		else {
-			meritWeight.value = merit_weight;
-		}
-
-		// demeritWeight
-		if(demerit_weight == null || demerit_weight == ""){
-			extensionApi.storage.local.set({
-				demerit_weight: demeritWeight.value
-			});
-		}
-		else {
-			demeritWeight.value = demerit_weight;
-		}
-
-		// maxPoint
-		maxPoint.value = max_point;
 
 		// resetAfterClosureToggle
 		resetAfterClosureToggle.checked = reset_after_closure;

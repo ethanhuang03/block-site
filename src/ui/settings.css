@@ -122,13 +122,16 @@ input[type=number] {
   display:none;
 }
 #one:checked ~ .panels #one-panel,
-#two:checked ~ .panels #two-panel{
+#two:checked ~ .panels #two-panel,
+#three:checked ~ .panels #three-panel{
   display:block
 }
 
 #one:checked ~ .tabs #one-tab,
-#two:checked ~ .tabs #two-tab{
+#two:checked ~ .tabs #two-tab,
+#three:checked ~ .tabs #three-tab{
   background:#fffffff6;
   color:#000;
   border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
 }
