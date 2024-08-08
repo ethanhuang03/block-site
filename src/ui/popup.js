@@ -19,7 +19,7 @@ const settingsButton = document.getElementById("settings-button");
 const enabledStatus = document.getElementById("status");
 
 const resetAfterClosureToggle = document.getElementById("reset-after-closure-toggle");
-const settingEnabled = document.getElementById("setting-enabled");
+const settingLocked = document.getElementById("setting-locked");
 
 
 function updateBadge(){
@@ -81,7 +81,7 @@ resolutionSelect.addEventListener("change", (event) => {
 });
 
 
-settingEnabled.addEventListener("click", (event) => {
+settingLocked.addEventListener("click", (event) => {
 	const setting_enabled = event.target.checked;
 
 	extensionApi.storage.local.get("enabled", function(local) {
@@ -170,8 +170,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		// resetAfterClosureToggle
 		resetAfterClosureToggle.checked = reset_after_closure;
 
-		// settingEnabled
-		settingEnabled.checked = setting_enabled;
+		// settingLocked
+		settingLocked.checked = setting_enabled;
 		block_settings(setting_enabled);
 
 		// UI ready

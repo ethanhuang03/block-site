@@ -14,7 +14,6 @@ const extensionApi =
 const blockedList = document.getElementById("blocked-list");
 const permanentblockedList = document.getElementById("permanent-blocked-list");
 const autofill = document.getElementById("autofill");
-const blockAdult = document.getElementById("block-adult");
 
 const meritWeight = document.getElementById("merit-weight");
 const demeritWeight = document.getElementById("demerit-weight");
@@ -51,7 +50,6 @@ function block_settings(setting_enabled){
 	if (setting_enabled){
 		document.getElementById("blocked-list").disabled = true;
 		document.getElementById("permanent-blocked-list").disabled = true;
-		document.getElementById("block-adult").disabled = true;
 		document.getElementById("merit-weight").disabled = true;
 		document.getElementById("demerit-weight").disabled = true;
 		document.getElementById("max-point").disabled = true;
@@ -62,7 +60,6 @@ function block_settings(setting_enabled){
 	else {
 		document.getElementById("blocked-list").disabled = false;
 		document.getElementById("permanent-blocked-list").disabled = false;
-		document.getElementById("block-adult").disabled = false;
 		document.getElementById("merit-weight").disabled = false;
 		document.getElementById("demerit-weight").disabled = false;
 		document.getElementById("max-point").disabled = false;
@@ -124,15 +121,6 @@ autofill.addEventListener("click", (event) => {
 	}
 });
 
-blockAdult.addEventListener("change", (event) => {
-	const block_adult = event.target.checked;
-
-	extensionApi.storage.local.set({
-		block_adult
-	});
-});
-
-
 meritWeight.addEventListener("change", (event) => {
 	const merit_weight = event.target.value;
 
@@ -184,12 +172,11 @@ saveButton.addEventListener("click", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-	extensionApi.storage.local.get(["blocked_list", "setting_enabled", "permanent_blocked", "block_adult", "autofill_enabled", "merit_weight", "demerit_weight", "max_point", "password_toggle"], function(local) {
+	extensionApi.storage.local.get(["blocked_list", "setting_enabled", "permanent_blocked", "autofill_enabled", "merit_weight", "demerit_weight", "max_point", "password_toggle"], function(local) {
 		const {
 			blocked_list,
 			setting_enabled,
 			permanent_blocked,
-			block_adult,
 			autofill_enabled,
 			merit_weight,
 			demerit_weight,
@@ -213,9 +200,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 		// settingEnabled
 		block_settings(setting_enabled);
-
-		// blockAdult
-		blockAdult.checked = block_adult;
 
 		// autofill
 		autofill.checked = autofill_enabled;

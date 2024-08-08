@@ -1,3 +1,2 @@
-Change: UI of input so there is checkbox
-Change: setting_enabled name is very misleading. setting_enabled = true means check box is ticked, so it disabbled...
+
 Change: Notify Email when uninstalled

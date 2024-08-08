@@ -64,25 +64,6 @@ function background_blocker() {
 			}
 
 			updateScore(url, tabId, true, true);
-
-			block_blacklist("block_adult", "blacklist/adult.txt", url, tabId);
-		}
-	});
-}
-
-function block_blacklist(category, blacklist, url, tabId) {
-	const normalizedUrl = normalizeUrl(url);
-	extensionApi.storage.local.get([category, "resolution", "demerit_weight", "score"], function(local) {
-		if (local[category]) {
-			fetch(chrome.runtime.getURL(blacklist))
-				.then(response => response.text())
-				.then(function(text) {
-					const rules = getRules(text.split(/\r?\n/));
-					const foundRule = rules.find((rule) => normalizedUrl.startsWith(rule.path) || normalizedUrl.endsWith(rule.path));
-					if (foundRule || !foundRule.type === "allow") {
-						block_website(local.resolution, url, tabId, parseFloat(local.score), parseFloat(local.demerit_weight), true);
-					}
-				});
 		}
 	});
 }
